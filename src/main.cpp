@@ -17,47 +17,107 @@ struct Pokemon
 
 /**********************************U I Z L maching*************************************/
 
-bool uMatching (Pokemon **pokeArr, int row, int col, int x_1, int y_1, int x_2, int y_2)
+bool uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
-    
-}
-bool IMatching (Pokemon **pokeArr, int row, int col, int x_1, int y_1, int x_2, int y_2)
-{
-    if (pokeArr[y_1][x_1].key == pokeArr[y_2][x_2].key)
-    {
-        if (y_2 == y_1)
-        {
-            while (x_1 < x_2 && x_1 != x_2)
-            {
-                if (pokeArr[y_1][x_1].deleted == false) return false;
-                x_1++;
-            }
-            while (x_1 > x_2 && x_1 != x_2)
-            {
-                if (pokeArr[y_1][x_1].deleted == false) return false;
-                x_1--;
-            }
-            return true;
+    if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key)
+        return false;
+    //check U ngang trái
+    int posx = 0;
+    for (int i = playerPosX - 1; i > 0; i--){
+        if (pokeArr[playerPosY][i].deleted == false){
+            posx = i + 1;
+            break;
         }
-        else return false;
-
-        if (x_2 == x_1)
-        {
-            while (y_1 < y_2 && y_1 != y_2)
-            {
-                if (pokeArr[y_1][x_1].deleted == false) return false;
-                y_1++;
-            }
-            while (y_1 > y_2 && y_1 != y_2)
-            {
-                if (pokeArr[y_1][x_1].deleted == false) return false;
-                y_1--;
-            }
-            return true;
-        }
-        else return false;
     }
-    else return false;
+    int posxx = 0;
+    for (int i = playerPosXX - 1; i > 0; i--){
+        if (pokeArr[playerPosYY][i].deleted == false){
+            posxx = i + 1;
+            break;
+        }
+    }
+    if (posx == posxx) return true;
+    //check U ngang phải
+    posx = col - 1;
+    for (int i = playerPosX + 1; i < col - 1; i++){
+        if (pokeArr[playerPosY][i].deleted == false){
+            posx = i - 1;
+            break;
+        }
+    }
+    posxx = col - 1;
+    for (int i = playerPosXX + 1; i < col - 1; i++){
+        if (pokeArr[playerPosYY][i].deleted == false){
+            posxx = i - 1;
+            break;
+        }
+    }
+    if (posx == posxx) return true;
+    //Check U trên
+    int posy = 0;
+    for (int i = playerPosY - 1; i > 0; i--){
+        if (pokeArr[i][playerPosX].deleted == false){
+            posy = i + 1;
+            break;
+        }
+    }
+    int posyy = 0;
+    for (int i = playerPosYY - 1; i > 0; i--){
+        if (pokeArr[i][playerPosX].deleted == false){
+            posyy = i + 1;
+            break;
+        }
+    }
+    if (posy == posyy) return true;
+    //Check U dưới
+    posy = row - 1;
+    for (int i = playerPosY + 1; i < row - 1; i++){
+        if (pokeArr[i][playerPosX].deleted == false){
+            posy = i - 1;
+            break;
+        }
+    }
+    posyy = row - 1;
+    for (int i = playerPosYY + 1; i < row - 1; i++){
+        if (pokeArr[i][playerPosX].deleted == false){
+            posyy = i - 1;
+            break;
+        }
+    }
+    if (posy == posyy) return true;
+    // Cả 4 không thỏa, trả về false
+    return false;
+}
+bool iMatching (Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2)
+{
+    //ignore if they are not same or if they are one
+    if (pokeArr[y_1][x_1].key != pokeArr[y_2][x_2].key || x_1 == x_2 && y_1 == y_2) return false;
+
+
+    if (y_1 == y_2)
+    {
+        if (x_1 > x_2) swap(x_1, x_2);
+
+        for (int i = x_1 + 1; i < x_2; i++)
+        {
+            if (pokeArr[y_1][i].deleted == false) return false;
+        }
+
+        return true;
+    }
+
+    if (x_2 == x_1)
+    {
+        if (y_1 > y_2) swap(y_1, y_2);
+
+        for (int i = y_1 + 1; i < y_2; i++)
+        {
+            if (pokeArr[i][x_1].deleted == false) return false;
+        }
+
+        return true;
+    }
+    return false;
 }
 
 
@@ -197,7 +257,7 @@ void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int s
 //delete cell
 void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 {
-    a[deletePosX][deletePosY].deleted = true;
+    a[deletePosY][deletePosX].deleted = true;
 }
 
 bool keyPressedLastFrame = false;
@@ -221,6 +281,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 firstSelectionDone = true;
                 selectedX = playerPosX;
                 selectedY = playerPosY;
+                pokeArr[selectedY][selectedX].selected = true;
             }
         } else {
             //if the first selection is done update player position
@@ -236,11 +297,12 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 //if the user presses Enter again mark the second selection
                 firstSelectionDone = false; // Reset for next selection
                 //call a function to handle the selection
-                if (IMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+                if (iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY) || uMatching(pokeArr, row, col, playerPosX, playerPosY, selectedX, selectedY))
                 {
-                deleteCell(pokeArr, selectedX, selectedY);
-                deleteCell(pokeArr, playerPosX, playerPosY);
+                    deleteCell(pokeArr, selectedX, selectedY);
+                    deleteCell(pokeArr, playerPosX, playerPosY);
                 }
+                pokeArr[selectedY][selectedX].selected = false;
             }
         }
     }
