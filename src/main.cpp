@@ -15,19 +15,56 @@ struct Pokemon
     bool vertical = true;
 };
 
-//***********************************************************************
-//U I Z L maching
-bool uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY)
+/**********************************U I Z L maching*************************************/
+
+bool uMatching (Pokemon **pokeArr, int row, int col, int x_1, int y_1, int x_2, int y_2)
 {
     
+}
+bool IMatching (Pokemon **pokeArr, int row, int col, int x_1, int y_1, int x_2, int y_2)
+{
+    if (pokeArr[y_1][x_1].key == pokeArr[y_2][x_2].key)
+    {
+        if (y_2 == y_1)
+        {
+            while (x_1 < x_2 && x_1 != x_2)
+            {
+                if (pokeArr[y_1][x_1].deleted == false) return false;
+                x_1++;
+            }
+            while (x_1 > x_2 && x_1 != x_2)
+            {
+                if (pokeArr[y_1][x_1].deleted == false) return false;
+                x_1--;
+            }
+            return true;
+        }
+        else return false;
+
+        if (x_2 == x_1)
+        {
+            while (y_1 < y_2 && y_1 != y_2)
+            {
+                if (pokeArr[y_1][x_1].deleted == false) return false;
+                y_1++;
+            }
+            while (y_1 > y_2 && y_1 != y_2)
+            {
+                if (pokeArr[y_1][x_1].deleted == false) return false;
+                y_1--;
+            }
+            return true;
+        }
+        else return false;
+    }
+    else return false;
 }
 
 
 
 
 
-
-//**************************************************************************
+/*****************************************************************************************/
 //read (n)image name "image.(i)"
 Texture2D* readImage(const int nPicture)
 {
@@ -164,30 +201,49 @@ void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 }
 
 bool keyPressedLastFrame = false;
-void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col) {
+void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY)
+{
     bool keyPressed = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_ENTER);
 
     if (keyPressed && !keyPressedLastFrame) {
-        if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 2) {
-            playerPosX++;
-        } else if (IsKeyDown(KEY_LEFT) && playerPosX > 1) {
-            playerPosX--;
-        } else if (IsKeyDown(KEY_UP) && playerPosY > 1) {
-            playerPosY--;
-        } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 2) {
-            playerPosY++;
-        } else if (IsKeyDown(KEY_ENTER)) {
-            pokeArr[playerPosY][playerPosX].selected = true;
-
+        if (!firstSelectionDone) {
+            //if the first selection is not done update player position
+            if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 2) {
+                playerPosX++;
+            } else if (IsKeyDown(KEY_LEFT) && playerPosX > 1) {
+                playerPosX--;
+            } else if (IsKeyDown(KEY_UP) && playerPosY > 1) {
+                playerPosY--;
+            } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 2) {
+                playerPosY++;
+            } else if (IsKeyDown(KEY_ENTER)) {
+                //if the user presses Enter mark the first selection
+                firstSelectionDone = true;
+                selectedX = playerPosX;
+                selectedY = playerPosY;
+            }
+        } else {
+            //if the first selection is done update player position
+            if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 2) {
+                playerPosX++;
+            } else if (IsKeyDown(KEY_LEFT) && playerPosX > 1) {
+                playerPosX--;
+            } else if (IsKeyDown(KEY_UP) && playerPosY > 1) {
+                playerPosY--;
+            } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 2) {
+                playerPosY++;
+            } else if (IsKeyDown(KEY_ENTER)) {
+                //if the user presses Enter again mark the second selection
+                firstSelectionDone = false; // Reset for next selection
+                //call a function to handle the selection
+                if (IMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+                {
+                deleteCell(pokeArr, selectedX, selectedY);
+                deleteCell(pokeArr, playerPosX, playerPosY);
+                }
+            }
         }
     }
-    // if (IsKeyPressed(KEY_ENTER) && !enterKeyPressed)
-        // {
-        //     // selectPosX = playerPosX;
-        //     // selectPosY = playerPosY;
-        //     deleteCell(resArr, playerPosX, playerPosY);
-        //     enterKeyPressed = true;
-        // }
 
     keyPressedLastFrame = keyPressed;
 }
@@ -200,8 +256,9 @@ int main()
     int playerPosX = 1;
     int playerPosY = 1;
 
-    int selectPosX = -1;// comming soon
-    int selectPosY = -1;
+    int selectedPosX = 1;// comming soon
+    int selectedPosY = 1;
+    bool selected = false;
 
     // size of the table row = row -2 col = col - 2
     int row = 9;
@@ -231,7 +288,7 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawTexturePro(texture, sourceRec, destRec, {0, 0}, 0, WHITE);// draw background
-        updateTable(resArr, playerPosX, playerPosY, row, col);
+        updateTable(resArr, playerPosX, playerPosY, row, col, selected, selectedPosX, selectedPosY);
         drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY);// draw pokemon
         EndDrawing();
     }
