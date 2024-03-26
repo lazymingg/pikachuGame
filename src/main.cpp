@@ -92,12 +92,10 @@ Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
         temp[i].pokeImage = texture[randomNumber];
         temp[i].deleted = false;
         temp[i].key = randomNumber;
-        cout << i;
         i++;
         temp[i].pokeImage = texture[randomNumber];
         temp[i].deleted = false;
         temp[i].key = randomNumber;
-        cout << i;
         i++; 
     }
     //free texture
@@ -142,15 +140,13 @@ void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int s
         {
             if(a[i][j].deleted == false || (j == playerPosX && i == playerPosY))
             {
+                //sourceRec is a size of source image destRec, is size of the out put image
                 Rectangle sourceRec = { 0, 0, (a[i][j].pokeImage).width, (a[i][j].pokeImage).height };
                 Rectangle destRec = { j * scaledWidth, i * scaledHeight, scaledWidth - 2, scaledHeight - 2};
             if ((j == playerPosX && i == playerPosY))
                 DrawTexturePro(a[i][j].pokeImage, sourceRec, destRec, {0, 0}, 0, GRAY);
             else
             {
-                //sourceRec is a size of source image destRec, is size of the out put image
-                // Rectangle sourceRec = { 0, 0, (a[i][j].pokeImage).width, (a[i][j].pokeImage).height };
-                // Rectangle destRec = { j * scaledWidth, i * scaledHeight, scaledWidth - 2, scaledHeight - 2};
                 if (a[i][j].selected == true)
                 DrawTexturePro(a[i][j].pokeImage, sourceRec, destRec, {0, 0}, 0, GRAY);
                 else
@@ -167,20 +163,21 @@ void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 }
 
 bool keyPressedLastFrame = false;
-void updatePlayerPosition(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col) {
+void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col) {
     bool keyPressed = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_ENTER);
 
     if (keyPressed && !keyPressedLastFrame) {
-        if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 1) {
+        if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 2) {
             playerPosX++;
-        } else if (IsKeyDown(KEY_LEFT) && playerPosX > 0) {
+        } else if (IsKeyDown(KEY_LEFT) && playerPosX > 1) {
             playerPosX--;
-        } else if (IsKeyDown(KEY_UP) && playerPosY > 0) {
+        } else if (IsKeyDown(KEY_UP) && playerPosY > 1) {
             playerPosY--;
-        } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 1) {
+        } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 2) {
             playerPosY++;
         } else if (IsKeyDown(KEY_ENTER)) {
             pokeArr[playerPosY][playerPosX].selected = true;
+
         }
     }
     // if (IsKeyPressed(KEY_ENTER) && !enterKeyPressed)
@@ -199,8 +196,8 @@ int main()
     const int HEIGHT = 686, WIDTH = 1024;
 
     // initial player Position
-    int playerPosX = 0;
-    int playerPosY = 0;
+    int playerPosX = 1;
+    int playerPosY = 1;
 
     int selectPosX = -1;// comming soon
     int selectPosY = -1;
@@ -233,7 +230,7 @@ int main()
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawTexturePro(texture, sourceRec, destRec, {0, 0}, 0, WHITE);// draw background
-        updatePlayerPosition(resArr, playerPosX, playerPosY, row, col);
+        updateTable(resArr, playerPosX, playerPosY, row, col);
         drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY);// draw pokemon
         EndDrawing();
     }
