@@ -73,21 +73,6 @@ void shufflePokemonArray(Pokemon* pokemonArray, int size) {
     }
 }
 
-// Hàm để xáo trộn mảng chứa các Pokemon
-void shuffleMatrix(Pokemon** matrix, int rows, int cols) {
-    srand(time(NULL)); // Khởi tạo hạt giống ngẫu nhiên từ thời gian
-
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            // Chọn ngẫu nhiên một phần tử từ vị trí hiện tại đến cuối ma trận
-            int randomRow = i + rand() % (rows - i);
-            int randomCol = (randomRow == i) ? j + rand() % (cols - j) : rand() % cols;
-
-            // Hoán đổi phần tử hiện tại với phần tử được chọn ngẫu nhiên
-            swapPokemon(matrix[i][j], matrix[randomRow][randomCol]);
-        }
-    }
-}
 // hàm này sẽ tạo môtj bảng với viền bên ngoài sẽ là các pokemon được gán mặc định là đã bị xóa
 // làm vậy để sau này đồng bộ với hàm vẽ đường đi vì đương đi có thể nằm ở ngoài viền
 Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
@@ -147,8 +132,6 @@ Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
     }
     //free the one dim arr
     delete[] temp;
-    // random pos for them
-    // shuffleMatrix(resArr, row, col);
     return resArr;
 }
 void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int scaledHeight, int playerPosX, int playerPosY)
