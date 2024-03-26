@@ -18,7 +18,7 @@ struct Pokemon
 //U I Z L maching
 bool uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY)
 {
-
+    
 }
 
 
