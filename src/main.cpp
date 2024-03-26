@@ -12,6 +12,7 @@ struct Pokemon
     bool deleted = false;
     bool selected = false;
     int key = 0;
+    bool vertical = true;
 };
 
 //***********************************************************************
