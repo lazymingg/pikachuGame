@@ -4,6 +4,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <string.h>
+
 using namespace std;
 
 struct Pokemon
@@ -119,9 +120,6 @@ bool iMatching (Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2)
     }
     return false;
 }
-
-
-
 
 
 /*****************************************************************************************/
@@ -241,7 +239,12 @@ void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int s
                 //sourceRec is a size of source image destRec, is size of the out put image
                 Rectangle sourceRec = { 0, 0, (a[i][j].pokeImage).width, (a[i][j].pokeImage).height };
                 Rectangle destRec = { j * scaledWidth, i * scaledHeight, scaledWidth - 2, scaledHeight - 2};
-            if ((j == playerPosX && i == playerPosY))
+
+            if (a[i][j].deleted == true)
+            {
+                DrawRectangle(j * scaledWidth, i * scaledHeight, scaledWidth - 2, scaledHeight - 2, Fade(LIGHTGRAY, 0.5f));
+            }
+            else if ((j == playerPosX && i == playerPosY))
                 DrawTexturePro(a[i][j].pokeImage, sourceRec, destRec, {0, 0}, 0, GRAY);
             else
             {
@@ -333,8 +336,6 @@ int main()
     const int numberOfPicture = 12;
     Texture2D *resTexture = readImage(numberOfPicture);//read image
 
-    //generate table
-    // Pokemon **resArr = createTable(row, col, resTexture, numberOfPicture);
     // read background
     Image image = LoadImage("src/croppic/nen.png");
     Texture2D texture = LoadTextureFromImage(image);
