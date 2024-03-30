@@ -13,7 +13,6 @@ struct Pokemon
     bool deleted = false;
     bool selected = false;
     int key = 0;
-    bool vertical = true;
 };
 
 /**********************************U I Z L maching*************************************/
@@ -123,6 +122,54 @@ bool iMatching (Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2)
 
 
 /*****************************************************************************************/
+struct Line
+{
+    bool vertical = false;
+    bool display = false;
+};
+// void updateLine(Line **lineArr, int row, int col)
+// {
+    
+// }
+void drawLine(Line **lineArr, int row, int col, int scaledWidth, int scaledHeight)
+{
+
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < col; j++)
+        {
+            if (lineArr[i][j].display == true)
+            {
+                if (lineArr[i][j].vertical == true)
+                {
+                    // toa do x y cua duong thang
+                    Vector2 point1 = {(j * scaledWidth + scaledWidth / 2), i * scaledHeight};
+                    Vector2 point2 = {(j * scaledWidth + scaledWidth / 2), (i + 1) * scaledHeight};
+                    double startTime = GetTime(); // Lưu thời gian bắt đầu
+                    while ((GetTime() - startTime) < 1.5) { // Kiểm tra thời gian đã trôi qua
+                        BeginDrawing();
+                        ClearBackground(RAYWHITE);
+                        DrawLineEx(point1, point2, 2, GRAY);
+                        EndDrawing();
+                    }
+                }
+                else
+                {
+                    // toa do x y cua duong thang
+                    Vector2 point1 = {j * scaledWidth, (i * scaledHeight + scaledHeight / 2)};
+                    Vector2 point2 = {(j + 1) * scaledWidth, (i * scaledHeight + scaledHeight / 2)};
+                    double startTime = GetTime(); // Lưu thời gian bắt đầu
+                    while ((GetTime() - startTime) < 1.5) { // Kiểm tra thời gian đã trôi qua
+                        BeginDrawing();
+                        ClearBackground(RAYWHITE);
+                        DrawLineEx(point1, point2, 2, GRAY);
+                        EndDrawing();
+                    }
+                }
+            }
+        }
+    }
+}
 //read (n)image name "image.(i)"
 Texture2D* readImage(const int nPicture)
 {
@@ -163,9 +210,7 @@ void shufflePokemonArray(Pokemon* pokemonArray, int size) {
         int j = rand() % (i + 1);
 
         // Hoán đổi giá trị của phần tử thứ i và j
-        Pokemon temp = pokemonArray[i];
-        pokemonArray[i] = pokemonArray[j];
-        pokemonArray[j] = temp;
+        swapPokemon(pokemonArray[i], pokemonArray[j]);
     }
 }
 
