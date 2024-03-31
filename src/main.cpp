@@ -4,7 +4,6 @@
 #include <ctime>
 #include <cstdlib>
 #include <string.h>
-#include <thread>
 
 using namespace std;
 
@@ -38,7 +37,6 @@ void clearList(Point *&head) {
         delete temp; // Xóa node hiện tại
     }
 }
-/**********************************U I Z L maching*************************************/
 void addTail(Point* &pHead, int x, int y){
     Point *add = new Point;
     add->x = x;
@@ -51,6 +49,7 @@ void addTail(Point* &pHead, int x, int y){
         pCur->next = add;
     }
 }
+/**********************************U I Z L maching*************************************/
 Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
     if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key)
@@ -150,7 +149,145 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
     }
     return pHead;
 }
+Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
+{
+    if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key || playerPosX == playerPosXX && playerPosY == playerPosYY)
+    {
+        return NULL;
+    }
+    Point* pHead = NULL;
 
+    // chắc chắn rằng playerPosX playerPosY luôn là điểm nằm bên trái
+    if (playerPosX > playerPosXX)
+    {
+        swap(playerPosX, playerPosXX);
+        swap(playerPosY, playerPosYY);
+    }
+    // kiểm tra xem điểm còn lại nằm ở trên hay dưới
+    // z doc
+    if (playerPosY > playerPosYY) // nếu nằm ở trên
+    {
+        for (int i = 1; i <  playerPosXX - playerPosX; i++)
+        {
+            if (pokeArr[playerPosY][playerPosX + i].deleted && pokeArr[playerPosYY][playerPosX + i].deleted)
+            {
+                for (int s = 0; s + i + playerPosX < playerPosXX; s++)
+                {
+                    if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) continue;
+                }
+                for (int j = 0; j <= playerPosY - playerPosYY; j++)
+                {
+                    if (pokeArr[playerPosY - j][playerPosX + i].deleted == false)
+                    {
+                        break;
+                    }
+                    if (j == playerPosY - playerPosYY)
+                    {
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY - j);
+                        addTail(pHead, playerPosX + i, playerPosY - j);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+    //z ngang 
+        for (int i = 1; i <  playerPosY - playerPosYY; i++)
+        {
+            if (pokeArr[playerPosY - i][playerPosX].deleted && pokeArr[playerPosY - i][playerPosXX].deleted)
+            {
+                for (int s = 0; playerPosY - i - s > playerPosYY; s++)
+                {
+                    if(pokeArr[playerPosY - i - s][playerPosXX].deleted == false) continue;
+                }
+                for (int j = 0; j <= playerPosXX - playerPosX; j++)
+                {
+                    if (pokeArr[playerPosY - i][playerPosX + j].deleted == false)
+                    {
+                        break;
+                    }
+                    if (j == playerPosXX - playerPosX)
+                    {
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX, playerPosY - i);
+                        addTail(pHead, playerPosX, playerPosY - i);
+                        addTail(pHead, playerPosX + j, playerPosY - i);
+                        addTail(pHead, playerPosX + j, playerPosY - i);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+    }
+    if (playerPosY < playerPosYY) // nếu nằm dưới 
+    {
+        //z doc
+        for (int i = 1; i <  playerPosXX - playerPosX; i++)
+        {
+            if (pokeArr[playerPosY][playerPosX + i].deleted && pokeArr[playerPosYY][playerPosX + i].deleted)
+            {
+                for (int s = 0; s + i + playerPosX < playerPosXX; s++)
+                {
+                    if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) continue;
+                }
+                for (int j = 0; j <= playerPosYY - playerPosY; j++)
+                {
+                    if (pokeArr[playerPosY + j][playerPosX + i].deleted == false)
+                    {
+                        break;
+                    }
+                    if (j == playerPosYY - playerPosY)
+                    {
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY + j);
+                        addTail(pHead, playerPosX + i, playerPosY + j);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }      
+                }
+            }
+        }
+        // z ngang
+        for (int i = 1; i <  playerPosYY - playerPosY; i++)
+        {
+            if (pokeArr[playerPosY + i][playerPosX].deleted && pokeArr[playerPosY + i][playerPosXX].deleted)
+            {
+                for (int s = 0; playerPosY + i + s < playerPosYY; s++)
+                {
+                    if(pokeArr[playerPosY + i + s][playerPosXX].deleted == false) continue;
+                }
+                for (int j = 0; j <= playerPosXX - playerPosX; j++)
+                {
+                    if (pokeArr[playerPosY + i][playerPosX + j].deleted == false)
+                    {
+                        break;
+                    }
+                    if (j == playerPosXX - playerPosX)
+                    {
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX, playerPosY + i);
+                        addTail(pHead, playerPosX, playerPosY + i);
+                        addTail(pHead, playerPosX + j, playerPosY + i);
+                        addTail(pHead, playerPosX + j, playerPosY + i);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+    }
+    return NULL;
+}
+Point *lMatching(Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
+{
+
+}
 Point* iMatching (Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2)
 {
     //ignore if they are not same or if they are one
@@ -304,6 +441,7 @@ Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
     //free texture
     delete[] texture;
     shufflePokemonArray(temp, size);
+    shufflePokemonArray(temp, size);
 
     Pokemon **resArr = new Pokemon *[row];
     for (int i = 0; i < row; i++)
@@ -411,6 +549,13 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 {
                     Point* pointList = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
                     drawLine(pointList, 60 , 60);
+                    deleteCell(pokeArr, selectedX, selectedY);
+                    deleteCell(pokeArr, playerPosX, playerPosY);
+                }
+                else if(zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                {
+                    Point* pointList = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
+                    drawLine(pointList, 60, 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                 }
