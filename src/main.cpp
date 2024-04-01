@@ -155,6 +155,7 @@ Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
     {
         return NULL;
     }
+    if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true) return NULL;
     Point* pHead = NULL;
 
     // chắc chắn rằng playerPosX playerPosY luôn là điểm nằm bên trái
@@ -296,43 +297,183 @@ Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
     }
     return NULL;
 }
-Point *lMatching(Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
+Point *lMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
+    // base condition
+    if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key || playerPosXX == playerPosX && playerPosY == playerPosYY)
+    return NULL;
+    if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true) return NULL;
 
+    // tạo List các điểm 
+    Point* pHead = NULL;
+
+    // chắc chắn rằng điểm playerPosX , playerPosY luôn là điểm nằm bên trái
+    if (playerPosX > playerPosXX)
+    {
+        swap(playerPosX, playerPosXX);
+        swap(playerPosY, playerPosYY);
+    }
+
+    // nếu điểm còn lại ở trên
+    if (playerPosYY < playerPosY)
+    {
+        // duyệt qua phải
+        for (int i = 1; i <= playerPosXX - playerPosX; i++)
+        {
+            if (pokeArr[playerPosY][playerPosX + i].deleted == false)
+            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
+
+            if (i == playerPosXX - playerPosX)
+            {
+                // duyệt lên
+                for (int j = 0; j < playerPosY - playerPosYY; j++)
+                {
+                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    if (pokeArr[playerPosY - j][playerPosX + i].deleted == false)
+                    {
+                        break;
+                    }
+                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    if (j == playerPosY - playerPosYY - 1)
+                    {
+                        // gán điểm 
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+        // Duyệt lên rồi qua phải
+        for (int i = 1; i <= playerPosY - playerPosYY; i++)
+        {
+            if (pokeArr[playerPosY - i][playerPosX].deleted == false)
+            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
+
+            if (i == playerPosY - playerPosYY)
+            {
+                // duyệt qua Phải
+                for (int j = 0; j < playerPosXX - playerPosX; j++)
+                {
+                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    if (pokeArr[playerPosY - i][playerPosX + j].deleted == false)
+                    {
+                        break;
+                    }
+                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    if (j == playerPosXX - playerPosX - 1)
+                    {
+                        // gán điểm 
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX, playerPosY - i);
+                        addTail(pHead, playerPosX, playerPosY - i);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+
+    }
+    // nếu điểm còn lại ở dưới 
+    if (playerPosYY > playerPosY)
+    {
+        // duyệt qua phải
+        for (int i = 1; i <= playerPosXX - playerPosX; i++)
+        {
+            if (pokeArr[playerPosY][playerPosX + i].deleted == false)
+            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
+
+            if (i == playerPosXX - playerPosX)
+            {
+                // duyệt xuống
+                for (int j = 0; j < playerPosYY - playerPosY; j++)
+                {
+                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    if (pokeArr[playerPosY + j][playerPosX + i].deleted == false)
+                    {
+                        break;
+                    }
+                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    if (j == playerPosYY - playerPosY - 1)
+                    {
+                        // gán điểm 
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX + i, playerPosY );
+                        addTail(pHead, playerPosX + i, playerPosY);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+        // duyệt xuống rồi qua phải 
+        for (int i = 1; i <= playerPosYY - playerPosY; i++)
+        {
+            if (pokeArr[playerPosY + i][playerPosX].deleted == false)
+            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
+
+            if (i == playerPosYY - playerPosY)
+            {
+                // duyệt qua phải
+                for (int j = 0; j < playerPosXX - playerPosX; j++)
+                {
+                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    if (pokeArr[playerPosY + i][playerPosX + j].deleted == false)
+                    {
+                        break;
+                    }
+                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    if (j == playerPosXX - playerPosX - 1)
+                    {
+                        // gán điểm 
+                        addTail(pHead, playerPosX, playerPosY);
+                        addTail(pHead, playerPosX, playerPosY + i);
+                        addTail(pHead, playerPosX, playerPosY + i);
+                        addTail(pHead, playerPosXX, playerPosYY);
+                        return pHead;
+                    }
+                }
+            }
+        }
+    }
+    return NULL;
 }
-Point* iMatching (Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2)
+Point* iMatching (Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
     //ignore if they are not same or if they are one
-    if (pokeArr[y_1][x_1].key != pokeArr[y_2][x_2].key || x_1 == x_2 && y_1 == y_2) return NULL;
-
+    if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key || playerPosX == playerPosXX && playerPosY == playerPosYY) return NULL;
+    if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true) return NULL;
     //create point list
     Point *pHead = NULL;
 
-    if (y_1 == y_2)
+    if (playerPosY == playerPosYY)
     {
-        if (x_1 > x_2) swap(x_1, x_2);
+        if (playerPosX > playerPosXX) swap(playerPosX, playerPosXX);
 
-        for (int i = x_1 + 1; i < x_2; i++)
+        for (int i = playerPosX + 1; i < playerPosXX; i++)
         {
-            if (pokeArr[y_1][i].deleted == false) return NULL;
+            if (pokeArr[playerPosY][i].deleted == false) return NULL;
         }
         // input point for list
-        pHead = createNodes(x_1, y_1);
-        pHead -> next = createNodes(x_2,y_2);
+        pHead = createNodes(playerPosX, playerPosY);
+        pHead -> next = createNodes(playerPosXX,playerPosYY);
         return pHead;
     }
 
-    if (x_2 == x_1)
+    if (playerPosXX == playerPosX)
     {
-        if (y_1 > y_2) swap(y_1, y_2);
+        if (playerPosY > playerPosYY) swap(playerPosY, playerPosYY);
 
-        for (int i = y_1 + 1; i < y_2; i++)
+        for (int i = playerPosY + 1; i < playerPosYY; i++)
         {
-            if (pokeArr[i][x_1].deleted == false) return NULL;
+            if (pokeArr[i][playerPosX].deleted == false) return NULL;
         }
         // input point for list
-        pHead = createNodes(x_1, y_1);
-        pHead -> next = createNodes(x_2,y_2);
+        pHead = createNodes(playerPosX, playerPosY);
+        pHead -> next = createNodes(playerPosXX,playerPosYY);
         return pHead;
     }
     return NULL;
@@ -571,13 +712,13 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                 }
-                // else if(uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
-                // {
-                //     Point* pointList = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY);
-                //     drawLine(pointList, 60 , 60);
-                //     deleteCell(pokeArr, selectedX, selectedY);
-                //     deleteCell(pokeArr, playerPosX, playerPosY);
-                // }
+                else if(lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                {
+                    Point* pointList = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
+                    drawLine(pointList, 60 , 60);
+                    deleteCell(pokeArr, selectedX, selectedY);
+                    deleteCell(pokeArr, playerPosX, playerPosY);
+                }
                 // deleteCell(pokeArr, selectedX, selectedY);
                 // deleteCell(pokeArr, playerPosX, playerPosY);
                 pokeArr[selectedY][selectedX].selected = false;
