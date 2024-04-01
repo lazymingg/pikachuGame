@@ -169,12 +169,14 @@ Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
     {
         for (int i = 1; i <  playerPosXX - playerPosX; i++)
         {
+            bool breakOut = false;
             if (pokeArr[playerPosY][playerPosX + i].deleted && pokeArr[playerPosYY][playerPosX + i].deleted)
             {
                 for (int s = 0; s + i + playerPosX < playerPosXX; s++)
                 {
-                    if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) continue;
+                    if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) breakOut = true;
                 }
+            if (breakOut == true) continue;
                 for (int j = 0; j <= playerPosY - playerPosYY; j++)
                 {
                     if (pokeArr[playerPosY - j][playerPosX + i].deleted == false)
@@ -197,12 +199,14 @@ Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
     //z ngang 
         for (int i = 1; i <  playerPosY - playerPosYY; i++)
         {
+            bool breakOut = false;
             if (pokeArr[playerPosY - i][playerPosX].deleted && pokeArr[playerPosY - i][playerPosXX].deleted)
             {
                 for (int s = 0; playerPosY - i - s > playerPosYY; s++)
                 {
-                    if(pokeArr[playerPosY - i - s][playerPosXX].deleted == false) continue;
+                    if(pokeArr[playerPosY - i - s][playerPosXX].deleted == false) breakOut = true;
                 }
+                if (breakOut == true) continue;
                 for (int j = 0; j <= playerPosXX - playerPosX; j++)
                 {
                     if (pokeArr[playerPosY - i][playerPosX + j].deleted == false)
@@ -228,12 +232,16 @@ Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
         //z doc
         for (int i = 1; i <  playerPosXX - playerPosX; i++)
         {
+            bool breakOut = false;
             if (pokeArr[playerPosY][playerPosX + i].deleted && pokeArr[playerPosYY][playerPosX + i].deleted)
             {
                 for (int s = 0; s + i + playerPosX < playerPosXX; s++)
                 {
-                    if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) continue;
+                    if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) breakOut = true;
                 }
+
+                if (breakOut == true) continue;
+
                 for (int j = 0; j <= playerPosYY - playerPosY; j++)
                 {
                     if (pokeArr[playerPosY + j][playerPosX + i].deleted == false)
@@ -256,12 +264,16 @@ Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
         // z ngang
         for (int i = 1; i <  playerPosYY - playerPosY; i++)
         {
+            bool breakOut = false;
             if (pokeArr[playerPosY + i][playerPosX].deleted && pokeArr[playerPosY + i][playerPosXX].deleted)
             {
                 for (int s = 0; playerPosY + i + s < playerPosYY; s++)
                 {
-                    if(pokeArr[playerPosY + i + s][playerPosXX].deleted == false) continue;
+                    if(pokeArr[playerPosY + i + s][playerPosXX].deleted == false) breakOut = true;
                 }
+
+                if (breakOut == true) continue;
+
                 for (int j = 0; j <= playerPosXX - playerPosX; j++)
                 {
                     if (pokeArr[playerPosY + i][playerPosX + j].deleted == false)
@@ -559,13 +571,15 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                 }
-                else if(uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
-                {
-                    Point* pointList = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY);
-                    drawLine(pointList, 60 , 60);
-                    deleteCell(pokeArr, selectedX, selectedY);
-                    deleteCell(pokeArr, playerPosX, playerPosY);
-                }
+                // else if(uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+                // {
+                //     Point* pointList = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY);
+                //     drawLine(pointList, 60 , 60);
+                //     deleteCell(pokeArr, selectedX, selectedY);
+                //     deleteCell(pokeArr, playerPosX, playerPosY);
+                // }
+                // deleteCell(pokeArr, selectedX, selectedY);
+                // deleteCell(pokeArr, playerPosX, playerPosY);
                 pokeArr[selectedY][selectedX].selected = false;
             }
         }
