@@ -54,6 +54,10 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
 {
     if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key)
         return NULL;
+    if (playerPosX == playerPosXX && playerPosY == playerPosYY)
+        return NULL;
+    if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true)
+        return NULL;
     // Chuẩn bị các tham số cần thiết
     Point* pHead = NULL;
     int minx, maxx, miny, maxy;
@@ -71,13 +75,29 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
         miny = playerPosYY;
         maxy = playerPosY;
     }
-    //check U ngang trái
+    // Check U trái
     for (int i = minx - 1; i >= 0 && pokeArr[playerPosY][i].deleted == true && pokeArr[playerPosYY][i].deleted == true; i--){
         bool valid = true;
-        for (int j = miny; j <= maxy; j++){
-            if (pokeArr[j][i].deleted == false){
+        for (int j = i; j < playerPosX; j++){
+            if (pokeArr[playerPosY][j].deleted == false){
                 valid = false;
                 break;
+            }
+        }
+        if (valid){
+            for (int j = i; j < playerPosXX; j++){
+                if (pokeArr[playerPosYY][j].deleted == false){
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if (valid){
+            for (int j = miny; j < maxy + 1; j++){
+                if (pokeArr[j][i].deleted == false){
+                    valid = false;
+                    break;
+                }
             }
         }
         if (valid){
@@ -90,13 +110,29 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
             return pHead;
         }
     }
-    // Check U ngang phải
+    // Check U phải
     for (int i = maxx + 1; i < col && pokeArr[playerPosY][i].deleted == true && pokeArr[playerPosYY][i].deleted == true; i++){
         bool valid = true;
-        for (int j = miny; j <= maxy; j++){
-            if (pokeArr[j][i].deleted == false){
+        for (int j = i; j > playerPosX; j--){
+            if (pokeArr[playerPosY][j].deleted == false){
                 valid = false;
                 break;
+            }
+        }
+        if (valid){
+            for (int j = i; j > playerPosXX; j--){
+                if (pokeArr[playerPosYY][j].deleted == false){
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if (valid){
+            for (int j = miny; j < maxy + 1; j++){
+                if (pokeArr[j][i].deleted == false){
+                    valid = false;
+                    break;
+                }
             }
         }
         if (valid){
@@ -112,10 +148,26 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
     // Check U trên
     for (int i = miny - 1; i >= 0 && pokeArr[i][playerPosX].deleted == true && pokeArr[i][playerPosXX].deleted == true; i--){
         bool valid = true;
-        for (int j = minx; j <= maxx; j++){
-            if (pokeArr[i][j].deleted == false){
+        for (int j = i; j < playerPosY; j++){
+            if (pokeArr[j][playerPosX].deleted == false){
                 valid = false;
                 break;
+            }
+        }
+        if (valid){
+            for (int j = i; j < playerPosYY; j++){
+                if (pokeArr[j][playerPosXX].deleted == false){
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if (valid){
+            for (int j = minx; j < maxx + 1; j++){
+                if (pokeArr[i][j].deleted == false){
+                    valid = false;
+                    break;
+                }
             }
         }
         if (valid){
@@ -131,10 +183,26 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
     // Check U dưới
     for (int i = maxy + 1; i < row && pokeArr[i][playerPosX].deleted == true && pokeArr[i][playerPosXX].deleted == true; i++){
         bool valid = true;
-        for (int j = minx; j <= maxx; j++){
-            if (pokeArr[i][j].deleted == false){
+        for (int j = i; j > playerPosY; j--){
+            if (pokeArr[j][playerPosX].deleted == false){
                 valid = false;
                 break;
+            }
+        }
+        if (valid){
+            for (int j = i; j > playerPosYY; j--){
+                if (pokeArr[j][playerPosXX].deleted == false){
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if (valid){
+            for (int j = minx; j < maxx + 1; j++){
+                if (pokeArr[i][j].deleted == false){
+                    valid = false;
+                    break;
+                }
             }
         }
         if (valid){
@@ -147,7 +215,7 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
             return pHead;
         }
     }
-    return pHead;
+    return NULL;
 }
 Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
@@ -700,6 +768,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 //call a function to handle the selection
                 if (iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
+                    cout << "imatching " << endl;
                     Point* pointList = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
                     drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
@@ -707,6 +776,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 }
                 else if(zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
+                    cout << "zmatching" << endl;
                     Point* pointList = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
                     drawLine(pointList, 60, 60);
                     deleteCell(pokeArr, selectedX, selectedY);
@@ -714,7 +784,16 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 }
                 else if(lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
+                    cout << "lmatching" << endl;
                     Point* pointList = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
+                    drawLine(pointList, 60 , 60);
+                    deleteCell(pokeArr, selectedX, selectedY);
+                    deleteCell(pokeArr, playerPosX, playerPosY);
+                }
+                else if(uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+                {
+                    cout << "umatching"<< endl;
+                    Point* pointList = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY);
                     drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
