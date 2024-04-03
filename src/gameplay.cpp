@@ -529,49 +529,6 @@ Point* iMatching (Pokemon **pokeArr, int playerPosX, int playerPosY, int playerP
     }
     return NULL;
 }
-
-
-/*****************************************************************************************/
-
-// void drawLine(Point* pHead, int scaledWidth, int scaledHeight)
-// {
-//     if (pHead == NULL) return;
-
-//     Point *pCur = pHead->next;
-//     Point *pPrev = pHead;
-
-//     double startTime = GetTime(); // Lưu thời gian bắt đầu
-    
-
-//     while (GetTime() - startTime < 0.5) // Kiểm tra thời gian đã trôi qua
-//     {
-//         BeginDrawing(); // Bắt đầu quá trình vẽ
-//         // Vẽ tất cả các đoạn thẳng trong danh sách
-//         while (pCur != NULL)
-//         {
-//             // Gan diem dau va cuoi cua duong thang theo kich thuoc cua o
-//             Vector2 point1 = {(pPrev->x * scaledWidth + scaledWidth / 2), (pPrev->y * scaledHeight + scaledHeight / 2)};
-//             Vector2 point2 = {(pCur->x * scaledWidth + scaledWidth / 2), (pCur->y * scaledHeight + scaledHeight / 2)};
-            
-//             DrawLineEx(point1, point2, 3, BLUE);// Ve duong thang
-
-//             // Kiểm tra xem còn đoạn thẳng tiếp theo không
-//             if (pCur -> next)
-//             {
-//                 pPrev = pPrev -> next -> next;
-//                 pCur = pCur -> next -> next;
-//             }
-//             else 
-//             {
-//                 pCur = pHead->next;
-//                 pPrev = pHead;
-//                 break;
-//             }
-//         }
-//         EndDrawing(); // Kết thúc quá trình vẽ
-//     }
-//     clearList(pHead);
-// }
 void drawLine(Point* pHead, int scaledWidth, int scaledHeight)
 {
     if (pHead == NULL) return;
@@ -746,88 +703,9 @@ void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 {
     a[deletePosY][deletePosX].deleted = true;
 }
-
-// bool keyPressedLastFrame = false;
-// void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY)
-// {
-//     bool keyPressed = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_ENTER);
-
-//     if (keyPressed && !keyPressedLastFrame) {
-//         if (!firstSelectionDone) {
-//             //if the first selection is not done update player position
-//             if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 2) {
-//                 playerPosX++;
-//             } else if (IsKeyDown(KEY_LEFT) && playerPosX > 1) {
-//                 playerPosX--;
-//             } else if (IsKeyDown(KEY_UP) && playerPosY > 1) {
-//                 playerPosY--;
-//             } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 2) {
-//                 playerPosY++;
-//             } else if (IsKeyDown(KEY_ENTER)) {
-//                 //if the user presses Enter mark the first selection
-//                 firstSelectionDone = true;
-//                 selectedX = playerPosX;
-//                 selectedY = playerPosY;
-//                 pokeArr[selectedY][selectedX].selected = true;
-//             }
-//         } else {
-//             //if the first selection is done update player position
-//             if (IsKeyDown(KEY_RIGHT) && playerPosX < col - 2) {
-//                 playerPosX++;
-//             } else if (IsKeyDown(KEY_LEFT) && playerPosX > 1) {
-//                 playerPosX--;
-//             } else if (IsKeyDown(KEY_UP) && playerPosY > 1) {
-//                 playerPosY--;
-//             } else if (IsKeyDown(KEY_DOWN) && playerPosY < row - 2) {
-//                 playerPosY++;
-//             } else if (IsKeyDown(KEY_ENTER)) {
-//                 //if the user presses Enter again mark the second selection
-//                 firstSelectionDone = false; // Reset for next selection
-//                 //call a function to handle the selection
-//                 if (iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
-//                 {
-//                     cout << "imatching " << endl;
-//                     Point* pointList = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
-//                     drawLine(pointList, 60 , 60);
-//                     deleteCell(pokeArr, selectedX, selectedY);
-//                     deleteCell(pokeArr, playerPosX, playerPosY);
-//                 }
-//                 else if(zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
-//                 {
-//                     cout << "zmatching" << endl;
-//                     Point* pointList = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
-//                     drawLine(pointList, 60, 60);
-//                     deleteCell(pokeArr, selectedX, selectedY);
-//                     deleteCell(pokeArr, playerPosX, playerPosY);
-//                 }
-//                 else if(lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
-//                 {
-//                     cout << "lmatching" << endl;
-//                     Point* pointList = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
-//                     drawLine(pointList, 60 , 60);
-//                     deleteCell(pokeArr, selectedX, selectedY);
-//                     deleteCell(pokeArr, playerPosX, playerPosY);
-//                 }
-//                 else if(uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
-//                 {
-//                     cout << "umatching"<< endl;
-//                     Point* pointList = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY);
-//                     drawLine(pointList, 60 , 60);
-//                     deleteCell(pokeArr, selectedX, selectedY);
-//                     deleteCell(pokeArr, playerPosX, playerPosY);
-//                 }
-//                 // deleteCell(pokeArr, selectedX, selectedY);
-//                 // deleteCell(pokeArr, playerPosX, playerPosY);
-//                 pokeArr[selectedY][selectedX].selected = false;
-//             }
-//         }
-//     }
-
-//     keyPressedLastFrame = keyPressed;
-// }
 void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime)
 {
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_ENTER)) {
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_SPACE)) {
         if (!firstSelectionDone) {
             if (IsKeyPressed(KEY_RIGHT) && playerPosX < col - 2) {
                 playerPosX++;
@@ -837,7 +715,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 playerPosY--;
             } else if (IsKeyPressed(KEY_DOWN) && playerPosY < row - 2) {
                 playerPosY++;
-            } else if (IsKeyPressed(KEY_ENTER)) {
+            } else if (IsKeyPressed(KEY_SPACE)) {
                 firstSelectionDone = true;
                 selectedX = playerPosX;
                 selectedY = playerPosY;
@@ -852,7 +730,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 playerPosY--;
             } else if (IsKeyPressed(KEY_DOWN) && playerPosY < row - 2) {
                 playerPosY++;
-            } else if (IsKeyPressed(KEY_ENTER)) {
+            } else if (IsKeyPressed(KEY_SPACE)) {
                 firstSelectionDone = false; // Reset for next selection
                 if (iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
@@ -895,50 +773,3 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
         }
     }
 }
-// int main()
-// {
-//     const int HEIGHT = 686, WIDTH = 1024;
-
-//     // initial player Position
-//     int playerPosX = 1;
-//     int playerPosY = 1;
-
-//     int selectedPosX = 1;// comming soon
-//     int selectedPosY = 1;
-//     bool selected = false;
-
-//     // size of the table row = row -2 col = col - 2
-//     int row = 9;
-//     int col = 14;
-
-//     InitWindow(WIDTH, HEIGHT, "Ming:DDD");
-//     SetTargetFPS(60);
-
-//     //read nPicture
-
-//     // read background
-//     Image image = LoadImage("src/croppic/nen.png");
-//     Texture2D texture = LoadTextureFromImage(image);
-//     UnloadImage(image);
-//     Pokemon **resArr = createTable(row, col, resTexture, numberOfPicture);
-//     const int scaledWidth = WIDTH; // beacause size of background need to be the same with scren width and screen height
-//     const int scaledHeight = HEIGHT; 
-//     Rectangle sourceRec = { 0, 0, texture.width, texture.height }; // initial pic size
-//     Rectangle destRec = { 0, 0, scaledWidth, scaledHeight }; // out put pic size
-//     while (WindowShouldClose() == false)
-//     {
-//         BeginDrawing();
-//         ClearBackground(RAYWHITE);
-//         DrawTexturePro(texture, sourceRec, destRec, {0, 0}, 0, WHITE);// draw background
-//         drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY);// draw pokemon
-//         updateTable(resArr, playerPosX, playerPosY, row, col, selected, selectedPosX, selectedPosY);
-//         EndDrawing();
-//     }
-//     //free resarr
-//     for (int i = 0; i < row; i++)
-//     {
-//         delete[] resArr[i];
-//     }
-//     delete[] resArr;
-//     CloseWindow();
-// }

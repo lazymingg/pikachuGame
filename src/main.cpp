@@ -28,7 +28,7 @@ Color backGround = {176, 212, 184, 255};
 int main(void)
 {
     
-    InitWindow(screenWidth, screenHeight, "Yeuuu thanhhh binhhh vaiii :D");
+    InitWindow(screenWidth, screenHeight, "pikachugame");
 
     const int numberOfPicture = 12;
     Texture2D *resTexture = readImage(numberOfPicture);
@@ -194,44 +194,3 @@ int main(void)
 
     return 0;
 }
-//------------------------------------------------------------------------------------------
-// Types and Structures Definition
-//------------------------------------------------------------------------------------------
-// typedef enum GameScreen { LOGO = 0, LOGIN, LOGIN, LEVEL } GameScreen;
-
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-// int main(void)
-// {
-//     // Initialization
-//     //--------------------------------------------------------------------------------------
-//     const int screenHeight = 686, screenWidth = 1024;
-
-//     InitWindow(screenWidth, screenHeight, "luv Sunny :D");
-
-//     SetTargetFPS(60);               // Set desired framerate (frames-per-second)
-//     //--------------------------------------------------------------------------------------
-//     int choice = 1;
-//     bool keyPressed = false;
-//     // Main game loop
-//     while (!WindowShouldClose())    // Detect window close button or ESC key
-//     {
-//         BeginDrawing();
-//         ClearBackground(RAYWHITE);
-//         // menuChoice(choice, keyPressed);
-//         // menuDraw(choice);
-//         drawLogin(keyPressed, choice);
-//         EndDrawing();
-//     }
-
-//     // De-Initialization
-//     //--------------------------------------------------------------------------------------
-
-//     // TODO: Unload all loaded data (textures, fonts, audio) here!
-
-//     CloseWindow();        // Close window and OpenGL context
-//     //--------------------------------------------------------------------------------------
-
-//     return 0;
-// }
