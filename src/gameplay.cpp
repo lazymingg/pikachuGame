@@ -536,8 +536,7 @@ void drawLine(Point* pHead, int scaledWidth, int scaledHeight)
     Point *pCur = pHead->next;
     Point *pPrev = pHead;
 
-        // BeginDrawing(); // Bắt đầu quá trình vẽ
-        // Vẽ tất cả các đoạn thẳng trong danh sách
+
         while (pCur != NULL)
         {
             // Gan diem dau va cuoi cua duong thang theo kich thuoc cua o
@@ -559,9 +558,6 @@ void drawLine(Point* pHead, int scaledWidth, int scaledHeight)
                 break;
             }
         }
-        // EndDrawing(); // Kết thúc quá trình vẽ
-
-    // clearList(pHead);
 }
 
 //read (n)image name "image.(i)"
@@ -633,8 +629,6 @@ Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
         temp[i].key = randomNumber;
         i++; 
     }
-    //free texture
-    delete[] texture;
 
     shufflePokemonArray(temp, size);
     shufflePokemonArray(temp, size);
@@ -666,7 +660,7 @@ Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
         }
     }
     //free the one dim arr
-    // delete[] temp;
+    delete[] temp;
     return resArr;
 }
 void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int scaledHeight, int playerPosX, int playerPosY)
@@ -705,6 +699,7 @@ void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 }
 void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime)
 {
+    Point* temp = NULL;
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_SPACE)) {
         if (!firstSelectionDone) {
             if (IsKeyPressed(KEY_RIGHT) && playerPosX < col - 2) {
@@ -732,37 +727,41 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 playerPosY++;
             } else if (IsKeyPressed(KEY_SPACE)) {
                 firstSelectionDone = false; // Reset for next selection
-                if (iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                if (temp = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
                     cout << "imatching " << endl;
-                    pointList = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
+                    clearList(pointList);
+                    pointList = temp;
                     // drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     matchingTime = GetTime();
                 }
-                else if(zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                else if(temp = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
                     cout << "zmatching" << endl;
-                    pointList = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
+                    clearList(pointList);
+                    pointList = temp;
                     // drawLine(pointList, 60, 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     matchingTime = GetTime();
                 }
-                else if(lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                else if(temp = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {
                     cout << "lmatching" << endl;
-                    pointList = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY);
+                    clearList(pointList);
+                    pointList = temp;
                     // drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     matchingTime = GetTime();
                 }
-                else if(uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+                else if(temp = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
                 {
                     cout << "umatching"<< endl;
-                    pointList = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY);
+                    clearList(pointList);
+                    pointList = temp;
                     // drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);

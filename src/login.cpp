@@ -9,9 +9,6 @@ const char *title2 = "Press Enter to login :D";
 const char *option1 ="User Name : ";
 const char *warning ="User Name lenght must at least 15 character !";
 
-string userName = "";
-string passWord = "";
-
 // Định nghĩa các hàm
 // bool checkUser(string userName)
 // {
@@ -33,7 +30,7 @@ string passWord = "";
 
 //     }
 // }
-void drawLogin(bool &keyPressed, int &playerSelection)
+void drawLogin(bool &keyPressed, int &playerSelection, string &userName)
 {
     // Nếu không có nút nào được nhấn, đặt keyPressed thành false
     // if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) 
@@ -147,4 +144,101 @@ void drawLogin(bool &keyPressed, int &playerSelection)
     //     DrawText(passWord.c_str(), screenWidth / 2 + textSize.x/2 - passWordSize.x/2, 400, 30, RED);
     // }
 
+}
+int *readNormalData(string filePath, string userName, int &size)
+{
+    ifstream fIn(filePath.c_str());
+
+    if (!fIn.is_open()) 
+    {
+        cout << "Không thể mở tệp tin!" << endl;
+        return NULL;
+    }
+    string temp = "";
+    size = 0;
+    int *normalData = NULL;
+    while (!fIn.eof())
+    {
+        getline(fIn, temp);
+        if (temp == userName)
+        {
+            fIn >> size;
+            fIn.ignore();
+            normalData = new int[size];
+            for (int i = 0; i < size; i++)
+            {
+                fIn >> normalData[i];
+                fIn.ignore();
+            }
+            fIn.close();
+            return normalData;
+        }
+    }
+    cout << "cant find normal data";
+    return NULL;
+}
+int *readSpecialData(string filePath, string userName, int &size)
+{
+    ifstream fIn(filePath.c_str());
+
+    if (!fIn.is_open()) 
+    {
+        cout << "Không thể mở tệp tin!" << endl;
+        return NULL;
+    }
+    string temp = "";
+    size = 0;
+    int *specialData = NULL;
+    while (!fIn.eof())
+    {
+        getline(fIn, temp);
+        if (temp == userName)
+        {
+            // skip một dòng 
+            string skip;
+            getline(fIn, skip);
+            //
+            fIn >> size;
+            fIn.ignore();
+            specialData = new int[size];
+            for (int i = 0; i < size; i++)
+            {
+                fIn >> specialData[i];
+                fIn.ignore();
+            }
+            fIn.close();
+            return specialData;
+        }
+    }
+    cout << "cant find normal data";
+    return NULL;
+}
+void checkAndCreateUser(string filePath, string userName)
+{
+    ifstream fIn(filePath.c_str());
+
+    if (!fIn.is_open()) 
+    {
+        cout << "Không thể mở tệp tin!" << endl;
+        return;
+    }
+
+    string temp = "";
+
+    while (!fIn.eof())
+    {
+        getline(fIn, temp);
+        if (userName == temp)
+        {
+            fIn.close();
+            return;
+        }
+    }
+    fIn.close();
+
+    ofstream fOut(filePath, ios::out | ios::app);
+    fOut << userName << endl;
+    fOut << 1 << " " << 0 << endl;
+    fOut << 1 << " " << 0 << endl;
+    fOut.close();
 }

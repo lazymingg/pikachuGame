@@ -25,6 +25,7 @@ struct Point
 // Khai báo biến global
 
 // Khai báo các hàm
+void clearList(Point *&head);
 void drawLine(Point* pHead, int scaledWidth, int scaledHeight);
 void addTail(Point* &pHead, int x, int y);
 /**********************************U I Z L maching*************************************/

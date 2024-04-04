@@ -10,5 +10,5 @@ extern int myGlobalVariable;
 // Khai báo các hàm
 void menuDraw(int choice);
 void menuChoice(int &choice, bool &keyPressed);
-void levelMenu(int &currentLevel);
+void levelMenu(int &currentLevel, int maxNormalLevel);
 #endif

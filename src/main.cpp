@@ -1,13 +1,13 @@
-#include "raylib.h"
+// #include "raylib.h"
 #include "menu.h"
 #include <sstream>
 #include "login.h"
 #include "gameplay.h"
-#include <iomanip>
-#include <iostream>
 using namespace std;
 
-typedef enum GameScreen { LOGO = 0, LOGIN, MENU, LEVEL, GAMEPLAY, SCORE, EXIST } GameScreen;
+typedef enum GameScreen { LOGO = 0, LOGIN, MENU, LEVEL, LEVELSPECIAL, GAMEPLAY, SCORE, EXIST } GameScreen;
+
+const string filePath = "src/data/user.txt";
 
 int choice = 1;
 bool keyPressed = false;
@@ -25,10 +25,17 @@ int playerSelectionY = 1;
 const int screenHeight = 686, screenWidth = 1024;
 Color backGround = {176, 212, 184, 255};
 
+int maxNormalLevel = 0;
+int *playerNormalSore = NULL;
+int maxSpecialLevel = 0;
+int *playerSpecialScore = NULL;
+
 int main(void)
 {
     
-    InitWindow(screenWidth, screenHeight, "pikachugame");
+    InitWindow(screenWidth, screenHeight, "pikachu");
+
+    SetExitKey(KEY_NULL);
 
     const int numberOfPicture = 12;
     Texture2D *resTexture = readImage(numberOfPicture);
@@ -36,17 +43,34 @@ int main(void)
     GameScreen currentScreen = LOGO;
 
     bool tableCreated = false;
-    bool selected = true;
-    bool isTheLineBeDraw = false;
+    bool selected = false;
+    
+    bool exitWindowRequested = false;   // Flag to request window to exit
+    bool exitWindow = false;    // Flag to set window to exit
+
     Pokemon **resArr = NULL;
 
     float previousMatchingTime = 0;
     int framesCounter = 0;
+
     Point* pointList = NULL;
+
+    string userName = "";
+
     SetTargetFPS(60);
 
-    while (!WindowShouldClose())
+    while (!exitWindow)
     {
+        if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindowRequested = true;
+        if (exitWindowRequested)
+        {
+            // A request for close window has been issued, we can save data before closing
+            // or just show a message asking for confirmation
+            
+            // if (IsKeyPressed(KEY_Y)) exitWindow = true;
+            // else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
+            if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindow = true;
+        }
         switch (currentScreen)
         {
             case LOGO:
@@ -62,6 +86,9 @@ int main(void)
             {
                 if (IsKeyPressed(KEY_ENTER))
                 {
+                    checkAndCreateUser(filePath, userName);
+                    playerNormalSore = readNormalData(filePath, userName, maxNormalLevel);
+                    playerSpecialScore = readSpecialData(filePath, userName, maxSpecialLevel);
                     currentScreen = MENU;
                 }
             } break;
@@ -81,10 +108,10 @@ int main(void)
             } break;
             case GAMEPLAY:
             {
-                // if (IsKeyPressed(KEY_ENTER))
-                // {
-                //     currentScreen = SCORE;
-                // }
+                if (IsKeyPressed(KEY_ENTER))
+                {
+                    currentScreen = SCORE;
+                }
             } break;
             case SCORE:
             {
@@ -104,7 +131,6 @@ int main(void)
         }
 
         BeginDrawing();
-
         ClearBackground(backGround);
 
         switch (currentScreen)
@@ -116,7 +142,8 @@ int main(void)
             } break;
             case LOGIN:
             {
-                drawLogin(keyPressed, choice);
+                drawLogin(keyPressed, choice, userName);
+
             } break;
             case MENU:
             {
@@ -125,7 +152,7 @@ int main(void)
             } break;
             case LEVEL:
             {
-                levelMenu(currentLevel);
+                levelMenu(currentLevel, maxNormalLevel);
             } break;
             case GAMEPLAY:
             {
@@ -146,13 +173,29 @@ int main(void)
                         {
                             drawLine(pointList, 60, 60);
                         }
+                        //khi win hãy xóa bộ nhớ của list điểm cuối cùng và delete resArr nữa 
                         drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY);
                         updateTable(resArr, playerPosX, playerPosY, row, col, selected, playerSelectionX, playerSelectionY, pointList, previousMatchingTime);
                     break;
 
                     case 2:
                         row = 7;
-                        col = 9;
+                        col = 10;
+                        if (tableCreated == false)
+                        {
+                        resArr = createTable(row, col, resTexture, numberOfPicture);
+                        tableCreated = true;
+                        cout << "hai";
+                        drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY);
+                        }
+
+                        if (GetTime() - previousMatchingTime < 1)
+                        {
+                            drawLine(pointList, 60, 60);
+                        }
+                        //khi win hãy xóa bộ nhớ của list điểm cuối cùng và delete resArr nữa 
+                        drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY);
+                        updateTable(resArr, playerPosX, playerPosY, row, col, selected, playerSelectionX, playerSelectionY, pointList, previousMatchingTime);
                     break;
 
                     case 3:
@@ -176,13 +219,17 @@ int main(void)
                     break;
                 }
             } break;
+            case LEVELSPECIAL:
+            {
+                levelMenu(currentLevel, maxSpecialLevel);
+            } break;
             case SCORE:
             {
-                levelMenu(currentLevel);
+                // levelMenu(currentLevel);
             } break;
             case EXIST:
             {
-                levelMenu(currentLevel);
+                // levelMenu(currentLevel);
             } break;
             default: break;
         }
@@ -191,6 +238,8 @@ int main(void)
     }
 
     CloseWindow();
+
+     delete[] resTexture;
 
     return 0;
 }

@@ -70,9 +70,9 @@ void menuDraw(int choice)
     }
 }
 
-void levelMenu(int &currentLevel)
+void levelMenu(int &currentLevel, int maxNormalLevel)
 {
-    if (IsKeyPressed(KEY_RIGHT) && currentLevel < 6) currentLevel++;
+    if (IsKeyPressed(KEY_RIGHT) && currentLevel < maxNormalLevel) currentLevel++;
     else if (IsKeyPressed(KEY_LEFT) && currentLevel > 1) currentLevel--;
 
     const int maxLevel = 6;
