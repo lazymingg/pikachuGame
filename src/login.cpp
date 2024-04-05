@@ -120,7 +120,7 @@ void drawLogin(bool &keyPressed, int &playerSelection, string &userName)
     // }
     // else
     // {
-        userNameSize = MeasureTextEx(GetFontDefault(), userName.c_str(), 30, 4);
+        // userNameSize = MeasureTextEx(GetFontDefault(), userName.c_str(), 30, 4);
         textSize = MeasureTextEx(GetFontDefault(), option1, 30, 3);
         DrawText(option1, screenWidth / 2 - textSize.x/2 - userNameSize.x/2, 350, 30, GRAY);
         DrawText(userName.c_str(), screenWidth / 2 + textSize.x/2 - userNameSize.x/2, 350, 30, GRAY);
@@ -213,6 +213,68 @@ int *readSpecialData(string filePath, string userName, int &size)
     cout << "cant find normal data";
     return NULL;
 }
+void saveGame(string userName, int *playerNormalData, int maxNormalLevel, int *playerSpecialData, int maxSpecialLevel, string filePath)
+{
+    ifstream fIn(filePath.c_str());
+    
+    string temp = "";
+    int count = 0;
+
+    while (getline(fIn, temp))
+    {
+        count++;
+    }
+    fIn.close();
+
+    ifstream fInn(filePath.c_str());
+    string *line = new string[count];
+    for (int i = 0; i < count; i++)
+    {
+        getline(fInn, line[i]);
+    }
+    fInn.close();
+    for (int i = 0; i < count; i++)
+    {
+        if (line[i] == userName)
+        {
+            line[i + 1] = to_string(maxNormalLevel) + " ";
+            for (int j = 0; j < maxNormalLevel; j++)
+            {
+                if (j == maxNormalLevel - 1)
+                {
+                    line[i + 1] = line[i + 1] + to_string(playerNormalData[j]);  
+                }
+                else
+                {
+                    line[i + 1] = line[i + 1] +  to_string(playerNormalData[j]) + " ";
+                }
+            }
+            line[i + 2] = to_string(maxSpecialLevel) + " ";
+            for (int j = 0; j < maxSpecialLevel; j++)
+            {
+                if (j == maxSpecialLevel - 1)
+                {
+                    line[i + 2] = line[i + 2] + to_string(playerSpecialData[j]);  
+                }
+                else
+                {
+                    line[i + 2] = line[i + 2] +  to_string(playerSpecialData[j]) + " ";
+                }
+                
+            }
+        }
+    }
+    //ghi lại lên file
+    ofstream fOut(filePath, ios::out);
+    for (int i = 0; i < count; i++)
+    {
+        fOut << line[i] << endl;
+    }
+
+    delete[] line;
+    fOut.close();
+    return;
+}
 void checkAndCreateUser(string filePath, string userName)
 {
     ifstream fIn(filePath.c_str());
@@ -241,4 +303,29 @@ void checkAndCreateUser(string filePath, string userName)
     fOut << 1 << " " << 0 << endl;
     fOut << 1 << " " << 0 << endl;
     fOut.close();
+}
+
+// sau khi hoàn thành xong màn chơi nếu người chơi chưa mở màn tiếp theo thì hãy mở cho họ và cập nhật điểm
+
+void saveScore(int *playerModeScore, int currentLevel, int newScore)
+{
+    if (playerModeScore[currentLevel - 1] < newScore)
+    {
+        playerModeScore[currentLevel - 1] = newScore;
+    }
+}
+
+void levelUp(int *&playerModeScore, int &maxModeLevel)
+{
+    int *temp = new int[maxModeLevel + 1];
+
+    for (int i = 0; i < maxModeLevel; i++)
+    {
+        temp[i] = playerModeScore[i];
+    
+    }
+    temp[maxModeLevel] = 0;
+    maxModeLevel++;
+    delete[] playerModeScore;
+    playerModeScore = temp;
 }
