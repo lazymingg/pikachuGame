@@ -97,8 +97,12 @@ int main(void)
         if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE))
         {
             // save game
+
             tempTimeLeft = GetTime();
+            if (currentScreen != EXIST)
+            {
             previousGameScreen = currentScreen;
+            }
             currentScreen = EXIST;
             // if (IsKeyPressed(KEY_Y)) exitWindow = true;
             // else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
@@ -118,7 +122,7 @@ int main(void)
             } break;
             case LOGIN:
             {
-                if (IsKeyPressed(KEY_ENTER))
+                if (IsKeyPressed(KEY_ENTER) && !userName.empty())
                 {
                     checkAndCreateUser(filePath, userName);
                     cout << "read player normal and special scoree" << endl;
@@ -412,6 +416,11 @@ int main(void)
 
             case LOGIN:
             {
+                if (userName == "")
+                {
+                    Vector2 warning = MeasureTextEx(GetFontDefault(), "You need to enter a username first in order to play", 30, 3);
+                    DrawText("You need to enter a username first in order to play", screenWidth / 2 - warning.x/2, 600, 30, RED);
+                }
                 drawLogin(keyPressed, choice, userName);
 
             } break;
