@@ -752,7 +752,7 @@ int calScore(int x_1, int y_1, int x_2, int y_2, char key)
 void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching)
 {
     Point* temp = NULL;
-    if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_SPACE)) {
+    if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ENTER)) {
         if (!firstSelectionDone) {
             if (IsKeyPressed(KEY_D) && playerPosX < col - 2) {
                 playerPosX++;
@@ -762,7 +762,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 playerPosY--;
             } else if (IsKeyPressed(KEY_S) && playerPosY < row - 2) {
                 playerPosY++;
-            } else if (IsKeyPressed(KEY_SPACE) && pokeArr[playerPosY][playerPosX].deleted == false) {
+            } else if (IsKeyPressed(KEY_ENTER) && pokeArr[playerPosY][playerPosX].deleted == false) {
                 firstSelectionDone = true;
                 selectedX = playerPosX;
                 selectedY = playerPosY;
@@ -777,7 +777,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 playerPosY--;
             } else if (IsKeyPressed(KEY_S) && playerPosY < row - 2) {
                 playerPosY++;
-            } else if (IsKeyPressed(KEY_SPACE)) {
+            } else if (IsKeyPressed(KEY_ENTER)) {
                 firstSelectionDone = false; // Reset for next selection
                 if (temp = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                 {

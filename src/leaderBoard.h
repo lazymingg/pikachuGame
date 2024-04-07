@@ -23,5 +23,5 @@ void bubbleSort(PlayerData *arr, int n, int level, bool mode);
 void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode);
 void displayLeaderBoard(PlayerData *arr, int size, bool &mode, int &level);
 void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode);
-void deallocatePlayerArray(PlayerData* playerArray, int size);
+void deallocatePlayerArray(PlayerData* &playerArray, int size);
 #endif

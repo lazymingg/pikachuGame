@@ -192,7 +192,7 @@ void displayLeaderBoard(PlayerData *arr, int size, bool &mode, int &level)
             break;
     }
 }
-void deallocatePlayerArray(PlayerData* playerArray, int size)
+void deallocatePlayerArray(PlayerData* &playerArray, int size)
 {
     // Kiểm tra nếu playerArray là NULL thì không cần giải phóng bộ nhớ
     if (playerArray == NULL)
@@ -219,4 +219,5 @@ void deallocatePlayerArray(PlayerData* playerArray, int size)
     }
     // Giải phóng bộ nhớ của mảng con trỏ
     delete[] playerArray;
+    playerArray = NULL;
 }

@@ -215,6 +215,7 @@ int *readSpecialData(string filePath, string userName, int &size)
 }
 void saveGame(string userName, int *playerNormalData, int maxNormalLevel, int *playerSpecialData, int maxSpecialLevel, string filePath)
 {
+    if (playerNormalData == NULL || playerSpecialData == NULL) return;
     ifstream fIn(filePath.c_str());
     
     string temp = "";

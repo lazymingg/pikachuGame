@@ -3,13 +3,13 @@
 #include <sstream>
 #include "login.h"
 #include "gameplay.h"
-using namespace std;
 #include "score.h"
 #include "timer.h"
 #include "leaderBoard.h"
+
 typedef enum GameScreen { LOGO = 0, LOGIN, MENU, LEADERBOARD, LEVEL, LEVELSPECIAL, GAMEPLAY, SCORE, EXIST } GameScreen;
 
-
+using namespace std;
 
 const int screenHeight = 686, screenWidth = 1024;
 
@@ -50,6 +50,7 @@ int main(void)
     bool normalMode = true;
 
     const int numberOfPicture = 12;
+    cout << "create restexture array" << endl;
     Texture2D *resTexture = readImage(numberOfPicture);
 
     GameScreen currentScreen = LOGO;
@@ -67,6 +68,7 @@ int main(void)
     float startGameTime = 0;
     int timeLevel = 0;
     float timeLeft = 0;
+    float tempTimeLeft = 0;
     int remainHelp = 0;
     int timeUp = 0;
 
@@ -80,31 +82,26 @@ int main(void)
     PlayerData *dataBase = NULL;
     bool normalLeaderBoard = true;
     int levelLeaderBoard = 1;
+
+    int exitOption = 0;
+    bool isPlayerInMatch = false;
+
+    GameScreen previousGameScreen = LOGO;
+
     SetTargetFPS(60);
 
     while (!exitWindow)
     {
+        cout << currentScreen << " " << previousGameScreen;
         // out game we need to dealocate so much thing here :DDDD
-        if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindowRequested = true;
-        if (exitWindowRequested)
+        if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE))
         {
             // save game
-            saveGame(userName, playerNormalScore, maxNormalLevel, playerSpecialScore, maxSpecialLevel, filePath);
-            //dealocate
-            clearList(suggestionList);
-            clearList(pointList);
-            cout << "free table " << endl;
-            free2DArray(resArr, row);
-            UnloadTextureArray(resTexture, numberOfPicture);
-            if (playerNormalScore != NULL)
-                delete[] playerNormalScore;
-            if (playerSpecialScore != NULL)
-                delete[] playerSpecialScore;
-            CloseWindow();
-            return 0;
+            tempTimeLeft = GetTime();
+            previousGameScreen = currentScreen;
+            currentScreen = EXIST;
             // if (IsKeyPressed(KEY_Y)) exitWindow = true;
             // else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
-            if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindow = true;
         }
 
         switch (currentScreen)
@@ -124,6 +121,7 @@ int main(void)
                 if (IsKeyPressed(KEY_ENTER))
                 {
                     checkAndCreateUser(filePath, userName);
+                    cout << "read player normal and special scoree" << endl;
                     playerNormalScore = readNormalData(filePath, userName, maxNormalLevel);
                     playerSpecialScore = readSpecialData(filePath, userName, maxSpecialLevel);
                     currentScreen = MENU;
@@ -145,16 +143,26 @@ int main(void)
                             currentScreen = LEVEL;
                             break;
                         case 3:
-                        // login again
+                        
+                            cout << "dealocate data base array" << endl;
                             deallocatePlayerArray(dataBase, dataBaseSize);
+                            dataBase = NULL;
+                            cout << "create data base" << endl;
                             dataBase = readUserData(dataBaseSize);
                             currentScreen = LEADERBOARD;
                             break;
                         case 4:
+                        // login again
                         if (playerNormalScore != NULL)
+                        {
+                            cout << "delete normal scoree" << endl;
                             delete[] playerNormalScore;
+                        }
                         if (playerSpecialScore != NULL)
+                        {
                             delete[] playerSpecialScore;
+                            cout << "delet special scoree" << endl;
+                        }
                             currentScreen = LOGIN;
                             break;
                     }
@@ -164,6 +172,8 @@ int main(void)
             {
                 if (IsKeyPressed(KEY_ENTER))
                 {
+                    cout << "dealocate data base" << endl;
+                    deallocatePlayerArray(dataBase, dataBaseSize);
                     currentScreen = MENU;
                 }
             } break;
@@ -232,6 +242,8 @@ int main(void)
                         playerSelectionX = 1;
                         playerSelectionY = 1;
                     }
+                    //  lets playyy
+                    isPlayerInMatch = true;
                     startGameTime = GetTime();
                     currentScreen = GAMEPLAY;
                 }
@@ -252,17 +264,19 @@ int main(void)
                     cout << "free tabe" << endl;
                     free2DArray(resArr, row);
                     resArr = NULL;
+                    isPlayerInMatch = false;
                     currentScreen = SCORE;
                 }
                 else if (isMatching == true)
                 {
                     startGameTime += timeUp;
+
                     clearList(suggestionList);
                     suggestion(resArr, row, col, suggestionList);
+                    
                     // player win or the matrix need to be random again
                     if (suggestionList == NULL)
                     {
-
                         //if player win we need to update playerscore and update current level
                         if (checkEmpty(resArr, row, col))
                         {
@@ -276,6 +290,7 @@ int main(void)
                             cout << "free table" << endl;
                             free2DArray(resArr, row);
                             resArr = NULL;
+                            isPlayerInMatch = false;
                             //chuyển sang màn hình score
                             currentScreen = SCORE;
                             break;
@@ -307,7 +322,77 @@ int main(void)
             {
                 if (IsKeyPressed(KEY_ENTER))
                 {
-                    currentScreen = LOGIN;
+                    switch (exitOption)
+                    {
+                        case 0:
+                            if (isPlayerInMatch)
+                            {
+                                startGameTime += GetTime() - tempTimeLeft;
+                                currentScreen = GAMEPLAY;
+                            }
+                            else 
+                            {
+                                currentScreen = previousGameScreen;
+                                cout << previousGameScreen;
+                            }
+                            break;
+                        case 1:
+                            if (isPlayerInMatch)
+                            {
+                                if (resArr != NULL)
+                                {
+                                    clearList(suggestionList);
+                                    clearList(pointList);
+                                    free2DArray(resArr, row);
+                                    resArr = NULL;
+                                    isPlayerInMatch = false;
+                                    playerPosX = 1;
+                                    playerPosY = 1;
+                                    playerSelectionX = 1;
+                                    playerSelectionY = 1;
+                                    currentScreen = MENU;
+                                }
+                            }
+                            else if (previousGameScreen == LOGIN || previousGameScreen == LOGO) 
+                            {
+                                cout << "flaggggg" << endl;
+                                currentScreen = LOGIN;
+                            }
+                            else
+                            {
+                                cout << "dealocate database" << endl;
+                                deallocatePlayerArray(dataBase, dataBaseSize);
+                                currentScreen = MENU;
+                            }
+                            break;
+                        case 2:
+                                cout << "saving current player Score" << endl;
+                                saveGame(userName, playerNormalScore, maxNormalLevel, playerSpecialScore, maxSpecialLevel, filePath);
+                                //dealocate
+                                cout << "clear point list and suggestion list " << endl;
+                                clearList(suggestionList);
+                                clearList(pointList);
+                                cout << "free table " << endl;
+                                free2DArray(resArr, row);
+                                cout << "free texture array" << endl;
+                                UnloadTextureArray(resTexture, numberOfPicture);
+                                if (playerNormalScore != NULL)
+                                {
+                                    delete[] playerNormalScore;
+                                    playerNormalScore = NULL;
+                                    cout << "free player Normal score" << endl;
+                                }
+                                if (playerSpecialScore != NULL)
+                                {
+                                    delete[] playerSpecialScore;
+                                    playerSpecialScore = NULL;
+                                    cout << "free player Special Scoree" << endl;
+                                }
+                                cout << "dealocate data base" << endl;
+                                deallocatePlayerArray(dataBase, dataBaseSize);
+                                exitWindow = true;
+                            break;
+                    }
                 }
             } break;
             default: break;
@@ -386,8 +471,7 @@ int main(void)
             } break;
             case EXIST:
             {
-
-
+                exitMenu(exitOption, isPlayerInMatch);
             } break;
             default: break;
         }

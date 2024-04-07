@@ -1,7 +1,5 @@
 #include "menu.h"
-// Định nghĩa biến global
-int myGlobalVariable = 0;
-const int screenHeight = 686, screenWidth = 1024;
+
 
 // Định nghĩa các hàm
 void menuChoice(int &choice)
@@ -22,6 +20,9 @@ void menuChoice(int &choice)
 
 void menuDraw(int choice)
 {
+    int screenHeight = GetScreenHeight();
+    int screenWidth = GetScreenWidth();
+
     const char *title = "Pikachu The Matching Game :D";
     const char *option1 ="Normal";
     const char *option2 ="Special";
@@ -75,6 +76,8 @@ void menuDraw(int choice)
 
 void levelMenu(int &currentLevel, int maxNormalLevel)
 {
+    int screenHeight = GetScreenHeight();
+    int screenWidth = GetScreenWidth();
     if (IsKeyPressed(KEY_D) && currentLevel < maxNormalLevel) currentLevel++;
     else if (IsKeyPressed(KEY_A) && currentLevel > 1) currentLevel--;
 
@@ -111,5 +114,77 @@ void levelMenu(int &currentLevel, int maxNormalLevel)
 
     Vector2 textSize = MeasureTextEx(GetFontDefault(), difficulty, 40, 4);
     DrawText(difficulty, screenWidth / 2 - textSize.x/2, 450, 40, GRAY);
+
+}
+void exitMenu(int &exitOption, bool isPlayerInMatch)
+{
+    int screenHeight = GetScreenHeight();
+    int screenWidth = GetScreenWidth();
+
+    DrawRectangle(0, screenHeight / 2 - 250, screenWidth, 500, BLACK);
+    string text1 = "Are you sure you want to exit the game ?";
+    string text2 = "Game paused";
+    Vector2 textSize;
+
+    const char *option1 =  "Continue :D";
+    const char *option2 = "Go To Menu";
+    const char *option3 = "Exit Game";
+
+    if (IsKeyPressed(KEY_S))
+    {
+        if (exitOption == 2)
+        exitOption = 0;
+        else // wrap around
+        exitOption++;
+    }
+    if (IsKeyPressed(KEY_W))
+    {
+        if (exitOption == 0)
+        exitOption = 2;
+        else // wrap around
+        exitOption--;
+    }
+
+    if (isPlayerInMatch)
+    {
+        textSize = MeasureTextEx(GetFontDefault(), text2.c_str(), 30, 3);
+        DrawText(text2.c_str(), screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 70 , 30, WHITE);
+    }
+    else
+    {
+        textSize = MeasureTextEx(GetFontDefault(), text1.c_str(), 30, 3);
+        DrawText(text1.c_str(), screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 70 , 30, WHITE);
+    }
+
+    if (exitOption == 0)
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option1, 30, 3);
+        DrawText(option1, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 150, 30, RED);
+    }
+    else
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option1, 30, 3);
+        DrawText(option1, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 150, 30, GRAY);
+    }
+    if (exitOption == 1)
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option2, 30, 3);
+        DrawText(option2, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 250, 30, RED);
+    }
+    else
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option2, 30, 3);
+        DrawText(option2, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 250, 30, GRAY);
+    }
+    if (exitOption == 2)
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option3, 30, 3);
+        DrawText(option3, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 350, 30, RED);
+    }
+    else
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option3, 30, 3);
+        DrawText(option3, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 350, 30, GRAY);
+    }
 
 }
