@@ -4,27 +4,19 @@ int myGlobalVariable = 0;
 const int screenHeight = 686, screenWidth = 1024;
 
 // Định nghĩa các hàm
-void menuChoice(int &choice, bool &keyPressed)
+void menuChoice(int &choice)
 {
-    // Nếu không có nút nào được nhấn, đặt keyPressed thành false
-    if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) 
-    {
-        keyPressed = false;
-    }
-
-    // Nếu người dùng nhấn nút lên và keyPressed là false
-    if (IsKeyDown(KEY_UP) && !keyPressed) 
+    // Nếu người dùng nhấn nút lên
+    if (IsKeyPressed(KEY_W)) 
     {
         choice--;
-        if (choice < 1) choice = 3; // Wrap-around
-        keyPressed = true; // Đặt keyPressed thành true để chỉ di chuyển một lần
+        if (choice < 1) choice = 4; // Wrap-around
     }
-    // Tương tự, nếu người dùng nhấn nút xuống và keyPressed là false
-    else if (IsKeyDown(KEY_DOWN) && !keyPressed) 
+    // Nếu người dùng nhấn nút xuống
+    else if (IsKeyPressed(KEY_S)) 
     {
         choice++;
-        if (choice > 3) choice = 1; // Wrap-around
-        keyPressed = true; // Đặt keyPressed thành true để chỉ di chuyển một lần
+        if (choice > 4) choice = 1; // Wrap-around
     }
 }
 
@@ -33,47 +25,58 @@ void menuDraw(int choice)
     const char *title = "Pikachu The Matching Game :D";
     const char *option1 ="Normal";
     const char *option2 ="Special";
-    const char *option3 ="Go Back";
+    const char *option3 ="Leader Board";
+    const char *option4 ="Go Back";
 
     Vector2 textSize = MeasureTextEx(GetFontDefault(), title, 40, 4);
-    DrawText(title, screenWidth / 2 - textSize.x/2, 150, 40, GRAY);
+    DrawText(title, screenWidth / 2 - textSize.x/2, 100, 40, GRAY);
 
     if (choice == 1)
     {
         textSize = MeasureTextEx(GetFontDefault(), option1, 40, 4);
-        DrawText(option1, screenWidth / 2 - textSize.x/2, 300, 40, RED);
+        DrawText(option1, screenWidth / 2 - textSize.x/2, 200, 40, RED);
     }
     else
     {
         textSize = MeasureTextEx(GetFontDefault(), option1, 40, 4);
-        DrawText(option1, screenWidth / 2 - textSize.x/2, 300, 40, GRAY);
+        DrawText(option1, screenWidth / 2 - textSize.x/2, 200, 40, GRAY);
     }
     if (choice == 2)
     {
         textSize = MeasureTextEx(GetFontDefault(), option2, 40, 4);
-        DrawText(option2, screenWidth / 2 - textSize.x/2, 400, 40, RED);
+        DrawText(option2, screenWidth / 2 - textSize.x/2, 300, 40, RED);
     }
     else
     {
         textSize = MeasureTextEx(GetFontDefault(), option2, 40, 4);
-        DrawText(option2, screenWidth / 2 - textSize.x/2, 400, 40, GRAY);
+        DrawText(option2, screenWidth / 2 - textSize.x/2, 300, 40, GRAY);
+    }
+    if (choice == 4)
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option4, 40, 4);
+        DrawText(option4, screenWidth / 2 - textSize.x/2, 500, 40, RED);
+    }
+    else
+    {
+        textSize = MeasureTextEx(GetFontDefault(), option4, 40, 4);
+        DrawText(option4, screenWidth / 2 - textSize.x/2, 500, 40, GRAY);
     }
     if (choice == 3)
     {
         textSize = MeasureTextEx(GetFontDefault(), option3, 40, 4);
-        DrawText(option3, screenWidth / 2 - textSize.x/2, 500, 40, RED);
+        DrawText(option3, screenWidth / 2 - textSize.x/2, 400, 40, RED);
     }
     else
     {
         textSize = MeasureTextEx(GetFontDefault(), option3, 40, 4);
-        DrawText(option3, screenWidth / 2 - textSize.x/2, 500, 40, GRAY);
+        DrawText(option3, screenWidth / 2 - textSize.x/2, 400, 40, GRAY);
     }
 }
 
 void levelMenu(int &currentLevel, int maxNormalLevel)
 {
-    if (IsKeyPressed(KEY_RIGHT) && currentLevel < maxNormalLevel) currentLevel++;
-    else if (IsKeyPressed(KEY_LEFT) && currentLevel > 1) currentLevel--;
+    if (IsKeyPressed(KEY_D) && currentLevel < maxNormalLevel) currentLevel++;
+    else if (IsKeyPressed(KEY_A) && currentLevel > 1) currentLevel--;
 
     const int maxLevel = 6;
 

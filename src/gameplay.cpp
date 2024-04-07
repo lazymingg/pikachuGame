@@ -1,8 +1,18 @@
 #include "gameplay.h"
 
 using namespace std;
+void UnloadTextureArray(Texture2D* textureArray, int arraySize)
+{
+    for (int i = 0; i < arraySize; ++i)
+    {
+        UnloadTexture(textureArray[i]);
+    }
+
+    delete[] textureArray;
+}
 void free2DArray(Pokemon** arr, int rows)
 {
+    if (arr == NULL) return;
     // Giải phóng từng hàng của mảng
     for (int i = 0; i < rows; ++i) {
         delete[] arr[i];
@@ -26,6 +36,7 @@ void clearList(Point *&head) {
         head = head->next; // Di chuyển head đến node tiếp theo
         delete temp; // Xóa node hiện tại
     }
+    head = NULL;
 }
 
 void addTail(Point* &pHead, int x, int y){
@@ -208,154 +219,6 @@ Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playe
     }
     return NULL;
 }
-// Point *zMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
-// {
-//     if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key || playerPosX == playerPosXX && playerPosY == playerPosYY)
-//     {
-//         return NULL;
-//     }
-//     if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true) return NULL;
-//     Point* pHead = NULL;
-
-//     // chắc chắn rằng playerPosX playerPosY luôn là điểm nằm bên trái
-//     if (playerPosX > playerPosXX)
-//     {
-//         swap(playerPosX, playerPosXX);
-//         swap(playerPosY, playerPosYY);
-//     }
-//     // kiểm tra xem điểm còn lại nằm ở trên hay dưới
-//     // z doc
-//     if (playerPosY > playerPosYY) // nếu nằm ở trên
-//     {
-//         for (int i = 1; i <  playerPosXX - playerPosX; i++)
-//         {
-//             bool breakOut = false;
-//             if (pokeArr[playerPosY][playerPosX + i].deleted && pokeArr[playerPosYY][playerPosX + i].deleted)
-//             {
-//                 for (int s = 0; s + i + playerPosX < playerPosXX; s++)
-//                 {
-//                     if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) breakOut = true;
-//                 }
-//             if (breakOut == true) continue;
-//                 for (int j = 0; j <= playerPosY - playerPosYY; j++)
-//                 {
-//                     if (pokeArr[playerPosY - j][playerPosX + i].deleted == false)
-//                     {
-//                         break;
-//                     }
-//                     if (j == playerPosY - playerPosYY)
-//                     {
-//                         addTail(pHead, playerPosX, playerPosY);
-//                         addTail(pHead, playerPosX + i, playerPosY);
-//                         addTail(pHead, playerPosX + i, playerPosY);
-//                         addTail(pHead, playerPosX + i, playerPosY - j);
-//                         addTail(pHead, playerPosX + i, playerPosY - j);
-//                         addTail(pHead, playerPosXX, playerPosYY);
-//                         return pHead;
-//                     }
-//                 }
-//             }
-//         }
-//     //z ngang 
-//         for (int i = 1; i <  playerPosY - playerPosYY; i++)
-//         {
-//             bool breakOut = false;
-//             if (pokeArr[playerPosY - i][playerPosX].deleted && pokeArr[playerPosY - i][playerPosXX].deleted)
-//             {
-//                 for (int s = 0; playerPosY - i - s > playerPosYY; s++)
-//                 {
-//                     if(pokeArr[playerPosY - i - s][playerPosXX].deleted == false) breakOut = true;
-//                 }
-//                 if (breakOut == true) continue;
-//                 for (int j = 0; j <= playerPosXX - playerPosX; j++)
-//                 {
-//                     if (pokeArr[playerPosY - i][playerPosX + j].deleted == false)
-//                     {
-//                         break;
-//                     }
-//                     if (j == playerPosXX - playerPosX)
-//                     {
-//                         addTail(pHead, playerPosX, playerPosY);
-//                         addTail(pHead, playerPosX, playerPosY - i);
-//                         addTail(pHead, playerPosX, playerPosY - i);
-//                         addTail(pHead, playerPosX + j, playerPosY - i);
-//                         addTail(pHead, playerPosX + j, playerPosY - i);
-//                         addTail(pHead, playerPosXX, playerPosYY);
-//                         return pHead;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     if (playerPosY < playerPosYY) // nếu nằm dưới 
-//     {
-//         //z doc
-//         for (int i = 1; i <  playerPosXX - playerPosX; i++)
-//         {
-//             bool breakOut = false;
-//             if (pokeArr[playerPosY][playerPosX + i].deleted && pokeArr[playerPosYY][playerPosX + i].deleted)
-//             {
-//                 for (int s = 0; s + i + playerPosX < playerPosXX; s++)
-//                 {
-//                     if(pokeArr[playerPosYY][playerPosX + i + s].deleted == false) breakOut = true;
-//                 }
-
-//                 if (breakOut == true) continue;
-
-//                 for (int j = 0; j <= playerPosYY - playerPosY; j++)
-//                 {
-//                     if (pokeArr[playerPosY + j][playerPosX + i].deleted == false)
-//                     {
-//                         break;
-//                     }
-//                     if (j == playerPosYY - playerPosY)
-//                     {
-//                         addTail(pHead, playerPosX, playerPosY);
-//                         addTail(pHead, playerPosX + i, playerPosY);
-//                         addTail(pHead, playerPosX + i, playerPosY);
-//                         addTail(pHead, playerPosX + i, playerPosY + j);
-//                         addTail(pHead, playerPosX + i, playerPosY + j);
-//                         addTail(pHead, playerPosXX, playerPosYY);
-//                         return pHead;
-//                     }      
-//                 }
-//             }
-//         }
-//         // z ngang
-//         for (int i = 1; i <  playerPosYY - playerPosY; i++)
-//         {
-//             bool breakOut = false;
-//             if (pokeArr[playerPosY + i][playerPosX].deleted && pokeArr[playerPosY + i][playerPosXX].deleted)
-//             {
-//                 for (int s = 0; playerPosY + i + s < playerPosYY; s++)
-//                 {
-//                     if(pokeArr[playerPosY + i + s][playerPosXX].deleted == false) breakOut = true;
-//                 }
-
-//                 if (breakOut == true) continue;
-
-//                 for (int j = 0; j <= playerPosXX - playerPosX; j++)
-//                 {
-//                     if (pokeArr[playerPosY + i][playerPosX + j].deleted == false)
-//                     {
-//                         break;
-//                     }
-//                     if (j == playerPosXX - playerPosX)
-//                     {
-//                         addTail(pHead, playerPosX, playerPosY);
-//                         addTail(pHead, playerPosX, playerPosY + i);
-//                         addTail(pHead, playerPosX, playerPosY + i);
-//                         addTail(pHead, playerPosX + j, playerPosY + i);
-//                         addTail(pHead, playerPosX + j, playerPosY + i);
-//                         addTail(pHead, playerPosXX, playerPosYY);
-//                         return pHead;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     return NULL;
-// }
 Point *zMatching(Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2){
     if (pokeArr[y_1][x_1].key != pokeArr[y_2][x_2].key)
         return NULL;
@@ -821,111 +684,15 @@ void createTable(Pokemon** &resArr, int row, int col, int nPicture)
             }
             else
             {
-            resArr[i][j].deleted = temp[count].deleted;
-            resArr[i][j].key = temp[count].key;
-            count++;
+                resArr[i][j].deleted = temp[count].deleted;
+                resArr[i][j].key = temp[count].key;
+                count++;
             }
         }
     }
     //free the one dim arr
     delete[] temp;
 }
-// Pokemon **createTable(int row, int col, Texture2D *texture, int nPicture)
-// {   
-//     srand(time(NULL)); // Seed random number generator
-    
-//     // Calculate total number of non-border cells
-//     int innerSize = (row - 2) * (col - 2);
-    
-//     // Create a temporary array to hold shuffled Pokémon
-//     Pokemon *temp = new Pokemon[innerSize * 2];
-    
-//     // Generate random Pokémon
-//     for (int i = 0; i < innerSize * 2; i += 2)
-//     {
-//         int randomNumber = rand() % nPicture;
-//         temp[i].pokeImage = texture[randomNumber];
-//         temp[i].deleted = false;
-//         temp[i].key = randomNumber;
-//         temp[i + 1] = temp[i]; // Assign the same Pokémon to the next cell
-//     }
-
-//     // Shuffle Pokémon array
-//     shufflePokemonArray(temp, innerSize * 2);
-//     shufflePokemonArray(temp, innerSize * 2);
-
-//     // Create the 2D array
-//     Pokemon **resArr = new Pokemon *[row];
-//     for (int i = 0; i < row; i++)
-//     {
-//         resArr[i] = new Pokemon[col];
-//     }
-
-//     // Assign Pokémon to cells
-//     int count = 0;
-//     for (int i = 0; i < row; i++)
-//     {
-//         for (int j = 0; j < col; j++)
-//         {
-//             if (i == 0 || j == 0 || i == row - 1 || j == col - 1)
-//             {
-//                 resArr[i][j].deleted = true;
-//                 resArr[i][j].pokeImage = temp[0].pokeImage; // Use the first Pokémon's image for border cells
-//                 resArr[i][j].key = temp[count].key;
-//             }
-//             else
-//             {
-//                 resArr[i][j].deleted = temp[count].deleted;
-//                 resArr[i][j].pokeImage = temp[count].pokeImage;
-//                 resArr[i][j].key = temp[count].key;
-//                 count++;
-//             }
-//         }
-//     }
-
-//     // Cleanup
-//     delete[] temp;
-    
-//     return resArr;
-// }
-
-// void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int scaledHeight, int playerPosX, int playerPosY)
-// {
-//     for (int i = 0; i < row; i++)
-//     {
-//         for (int j = 0; j < col; j++)
-//         {
-//             if(a[i][j].deleted == false || (j == playerPosX && i == playerPosY))
-//             {
-//                 //sourceRec is a size of source image destRec, is size of the out put image
-//                 Rectangle sourceRec = { 0, 0, (a[i][j].key).width, (a[i][j].pokeImage).height };
-//                 Rectangle destRec = { j * (scaledWidth + 5), i * (scaledHeight + 5), scaledWidth, scaledHeight};
-//                 Rectangle destLineRec = { j * (scaledWidth + 5) - 5, i * (scaledHeight + 5) - 5, scaledWidth + 10, scaledHeight + 10};
-
-//             if (a[i][j].deleted == true)
-//             {
-//                 // DrawRectangle(j * (scaledWidth + 5), i * (scaledHeight + 5), scaledWidth, scaledHeight, Fade(LIGHTGRAY, 0.5f));
-//                 DrawRectangleLinesEx(destLineRec, 2, DARKGREEN);
-//             }
-//             else if ((j == playerPosX && i == playerPosY))
-//             {
-//                 DrawTexturePro(a[i][j].pokeImage, sourceRec, destRec, {0, 0}, 0, WHITE);
-//                 DrawRectangleLinesEx(destLineRec, 5, DARKGREEN);
-//             }
-//             else
-//             {
-//                 if (a[i][j].selected == true)
-//                 {
-//                 DrawTexturePro(a[i][j].pokeImage, sourceRec, destRec, {0, 0}, 0, WHITE);
-//                 DrawRectangleLinesEx(destLineRec, 5, DARKGREEN);
-//                 }
-//                 else
-//                 DrawTexturePro(a[i][j].pokeImage, sourceRec, destRec, {0, 0}, 0, WHITE);
-//             }
-//             }
-//         }
-//     }
-// }
 void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int scaledHeight, int playerPosX, int playerPosY, Texture2D *texture)
 {
     for (int i = 0; i < row; i++)
@@ -968,6 +735,7 @@ void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 {
     a[deletePosY][deletePosX].deleted = true;
 }
+
 int calScore(int x_1, int y_1, int x_2, int y_2, char key)
 {
     int x = x_2 - x_1, y = y_2 - y_1;
@@ -984,30 +752,30 @@ int calScore(int x_1, int y_1, int x_2, int y_2, char key)
 void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching)
 {
     Point* temp = NULL;
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_SPACE)) {
+    if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_SPACE)) {
         if (!firstSelectionDone) {
-            if (IsKeyPressed(KEY_RIGHT) && playerPosX < col - 2) {
+            if (IsKeyPressed(KEY_D) && playerPosX < col - 2) {
                 playerPosX++;
-            } else if (IsKeyPressed(KEY_LEFT) && playerPosX > 1) {
+            } else if (IsKeyPressed(KEY_A) && playerPosX > 1) {
                 playerPosX--;
-            } else if (IsKeyPressed(KEY_UP) && playerPosY > 1) {
+            } else if (IsKeyPressed(KEY_W) && playerPosY > 1) {
                 playerPosY--;
-            } else if (IsKeyPressed(KEY_DOWN) && playerPosY < row - 2) {
+            } else if (IsKeyPressed(KEY_S) && playerPosY < row - 2) {
                 playerPosY++;
-            } else if (IsKeyPressed(KEY_SPACE)) {
+            } else if (IsKeyPressed(KEY_SPACE) && pokeArr[playerPosY][playerPosX].deleted == false) {
                 firstSelectionDone = true;
                 selectedX = playerPosX;
                 selectedY = playerPosY;
                 pokeArr[selectedY][selectedX].selected = true;
             }
         } else {
-            if (IsKeyPressed(KEY_RIGHT) && playerPosX < col - 2) {
+            if (IsKeyPressed(KEY_D) && playerPosX < col - 2) {
                 playerPosX++;
-            } else if (IsKeyPressed(KEY_LEFT) && playerPosX > 1) {
+            } else if (IsKeyPressed(KEY_A) && playerPosX > 1) {
                 playerPosX--;
-            } else if (IsKeyPressed(KEY_UP) && playerPosY > 1) {
+            } else if (IsKeyPressed(KEY_W) && playerPosY > 1) {
                 playerPosY--;
-            } else if (IsKeyPressed(KEY_DOWN) && playerPosY < row - 2) {
+            } else if (IsKeyPressed(KEY_S) && playerPosY < row - 2) {
                 playerPosY++;
             } else if (IsKeyPressed(KEY_SPACE)) {
                 firstSelectionDone = false; // Reset for next selection
@@ -1016,7 +784,6 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     cout << "imatching " << endl;
                     clearList(pointList);
                     pointList = temp;
-                    // drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     isMatching = true;
@@ -1028,7 +795,6 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     cout << "zmatching" << endl;
                     clearList(pointList);
                     pointList = temp;
-                    // drawLine(pointList, 60, 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     isMatching = true;
@@ -1040,7 +806,6 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     cout << "lmatching" << endl;
                     clearList(pointList);
                     pointList = temp;
-                    // drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     isMatching = true;
@@ -1052,19 +817,23 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     cout << "umatching"<< endl;
                     clearList(pointList);
                     pointList = temp;
-                    // drawLine(pointList, 60 , 60);
                     deleteCell(pokeArr, selectedX, selectedY);
                     deleteCell(pokeArr, playerPosX, playerPosY);
                     matchingTime = GetTime();
                     isMatching = true;
                     scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'u');
                 }
-                else if (scoree - 20 > 0)
+                else if (selectedX != playerPosX && selectedY != playerPosY || pokeArr[playerPosY][playerPosX].deleted == false && pokeArr[selectedY][selectedX].deleted == false)
                 {
-                    scoree -= 20;
+                    cout << "scoredown";
+                    if (scoree - 30 > 0)
+                    scoree -= 30;
                 }
-                
                 pokeArr[selectedY][selectedX].selected = false;
+                firstSelectionDone = true;
+                selectedX = playerPosX;
+                selectedY = playerPosY;
+                pokeArr[selectedY][selectedX].selected = true;
             }
         }
     }
@@ -1161,35 +930,17 @@ bool suggestionButItJustForDeveloper(Pokemon **pokeArr, int row, int col, Point 
     }
     return false;
 }
-void hintshuffle(Pokemon **pokeArr, int row, int col)
+void shuffle_array_2d(Pokemon **arr, int row, int col)
 {
-    int left = 0;
-    bool del[row - 2][col - 2];
-    for (int i = 1; i < row - 1; i++){
-        for (int j = 1; j < col - 1; j++){
-            if (pokeArr[i][j].deleted)
-                del[i][j] = true;
-            else {
-                del[i][j] = false;
-                left++;
-            }
-        }
+  // Bắt đầu từ vị trí (1, 1) và kết thúc tại (row - 2, col - 2) để chừa viền ngoài
+  for (int i = 1; i < row - 1; i++) {
+    for (int j = 1; j < col - 1; j++) {
+      // Tạo một vị trí ngẫu nhiên trong phạm vi phần tử bên trong
+      int rand_i = rand() % (row - 2 - 1) + 1;
+      int rand_j = rand() % (col - 2 - 1) + 1;
+
+      // Hoán đổi phần tử tại vị trí hiện tại với vị trí ngẫu nhiên
+      swapPokemon(arr[i][j], arr[rand_i][rand_j]);
     }
-    srand(time(0));
-    for (int i = 1; i < row - 1; i++){
-        for (int j = 1; j < col - 1; j++){
-            if (left == 0) return;
-            if(del[i][j] == false){
-                int k = i, l = j;
-                while ((k == i && l == j) || del[k][l] == true){
-                    k = (rand() % (row - 2)) + 1;
-                    l = (rand() % (col - 2)) + 1;
-                }
-                swapPokemon(pokeArr[i][j], pokeArr[k][l]);
-                del[i][j] = true;
-                del[k][l] = true;
-                left -= 2;
-            }
-        }
-    }
+  }
 }

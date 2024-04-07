@@ -224,43 +224,43 @@ void saveGame(string userName, int *playerNormalData, int maxNormalLevel, int *p
     {
         count++;
     }
-    fIn.close();
-
-    ifstream fInn(filePath.c_str());
+    fIn.clear();
+    fIn.seekg(0, ios::beg);
     string *line = new string[count];
     for (int i = 0; i < count; i++)
     {
-        getline(fInn, line[i]);
+        getline(fIn, line[i]);
     }
-    fInn.close();
+    fIn.close();
     for (int i = 0; i < count; i++)
     {
         if (line[i] == userName)
         {
             line[i + 1] = to_string(maxNormalLevel) + " ";
-            for (int j = 0; j < maxNormalLevel; j++)
+            for (int j = 0; j < 6; j++)
             {
-                if (j == maxNormalLevel - 1)
+                if (j < maxNormalLevel)
                 {
                     line[i + 1] = line[i + 1] + to_string(playerNormalData[j]);  
                 }
                 else
                 {
-                    line[i + 1] = line[i + 1] +  to_string(playerNormalData[j]) + " ";
+                    line[i + 1] = line[i + 1] + to_string(0);
                 }
+                if (j < 5) line[i + 1] = line[i + 1] + " ";
             }
             line[i + 2] = to_string(maxSpecialLevel) + " ";
-            for (int j = 0; j < maxSpecialLevel; j++)
+            for (int j = 0; j < 6; j++)
             {
-                if (j == maxSpecialLevel - 1)
+                if (j < maxSpecialLevel)
                 {
                     line[i + 2] = line[i + 2] + to_string(playerSpecialData[j]);  
                 }
                 else
                 {
-                    line[i + 2] = line[i + 2] +  to_string(playerSpecialData[j]) + " ";
+                    line[i + 2] = line[i + 2] + to_string(0);
                 }
-                
+                if (j < 5) line[i + 2] = line[i + 2] + " ";
             }
         }
     }
@@ -300,8 +300,26 @@ void checkAndCreateUser(string filePath, string userName)
 
     ofstream fOut(filePath, ios::out | ios::app);
     fOut << userName << endl;
-    fOut << 1 << " " << 0 << endl;
-    fOut << 1 << " " << 0 << endl;
+    fOut << 1 << " ";
+    for (int i = 0; i < 6; i++)
+    {
+        if (i == 5)
+        {
+            fOut << 0 << endl;
+        }
+        else
+        fOut << 0 << " ";
+    }
+    fOut << 1 << " ";
+    for (int i = 0; i < 6; i++)
+    {
+        if (i == 5 )
+        {
+            fOut << 0 << endl;
+        }
+        else
+        fOut << 0 << " ";
+    }
     fOut.close();
 }
 
@@ -324,8 +342,10 @@ void levelUp(int *&playerModeScore, int &maxModeLevel)
         temp[i] = playerModeScore[i];
     
     }
+    
     temp[maxModeLevel] = 0;
     maxModeLevel++;
+
     delete[] playerModeScore;
     playerModeScore = temp;
 }

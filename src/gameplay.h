@@ -25,6 +25,7 @@ struct Point
 // Khai báo biến global
 
 // Khai báo các hàm
+void UnloadTextureArray(Texture2D* textureArray, int arraySize);
 void free2DArray(Pokemon** arr, int rows);
 void clearList(Point *&head);
 void drawLine(Point* pHead, int scaledWidth, int scaledHeight);
@@ -51,5 +52,5 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
 bool suggestion(Pokemon **pokeArr, int row, int col, Point *&pointList);
 bool suggestionButItJustForDeveloper(Pokemon **pokeArr, int row, int col, Point *&pointList, float &matchingTime);
 bool checkEmpty(Pokemon **pokeArr, int row, int col);
-void hintshuffle(Pokemon **pokeArr, int row, int col);
+void shuffle_array_2d(Pokemon **arr, int row, int col);
 #endif

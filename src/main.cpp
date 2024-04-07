@@ -5,7 +5,9 @@
 #include "gameplay.h"
 using namespace std;
 #include "score.h"
-typedef enum GameScreen { LOGO = 0, LOGIN, MENU, LEVEL, LEVELSPECIAL, GAMEPLAY, SCORE, EXIST } GameScreen;
+#include "timer.h"
+#include "leaderBoard.h"
+typedef enum GameScreen { LOGO = 0, LOGIN, MENU, LEADERBOARD, LEVEL, LEVELSPECIAL, GAMEPLAY, SCORE, EXIST } GameScreen;
 
 
 
@@ -15,7 +17,7 @@ const int screenHeight = 686, screenWidth = 1024;
 int main(void)
 {
     
-    InitWindow(screenWidth, screenHeight, "thanhhh binhhh de thuongg :D");
+    InitWindow(screenWidth, screenHeight, "pikachuu");
 
     SetExitKey(KEY_NULL);
     const string filePath = "src/data/user.txt";
@@ -32,6 +34,7 @@ int main(void)
 
     int playerSelectionX = 1;
     int playerSelectionY = 1;
+
 
     Color backGround = {176, 212, 184, 255};
 
@@ -51,7 +54,6 @@ int main(void)
 
     GameScreen currentScreen = LOGO;
 
-    bool tableCreated = false;
     bool selected = false;
     
     bool exitWindowRequested = false;   // Flag to request window to exit
@@ -62,30 +64,48 @@ int main(void)
     float previousMatchingTime = 0;
     float previousSuggestTime = 0;
 
+    float startGameTime = 0;
+    int timeLevel = 0;
+    float timeLeft = 0;
+    int remainHelp = 0;
+    int timeUp = 0;
+
     int framesCounter = 0;
 
     Point* pointList = NULL;
     Point* suggestionList = NULL;
     string userName = "";
 
+    int dataBaseSize = 0;
+    PlayerData *dataBase = NULL;
+    bool normalLeaderBoard = true;
+    int levelLeaderBoard = 1;
     SetTargetFPS(60);
 
     while (!exitWindow)
     {
-
+        // out game we need to dealocate so much thing here :DDDD
         if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindowRequested = true;
         if (exitWindowRequested)
         {
-            // A request for close window has been issued, we can save data before closing
-            // or just show a message asking for confirmation
+            // save game
             saveGame(userName, playerNormalScore, maxNormalLevel, playerSpecialScore, maxSpecialLevel, filePath);
+            //dealocate
+            clearList(suggestionList);
+            clearList(pointList);
+            cout << "free table " << endl;
+            free2DArray(resArr, row);
+            UnloadTextureArray(resTexture, numberOfPicture);
+            if (playerNormalScore != NULL)
+                delete[] playerNormalScore;
+            if (playerSpecialScore != NULL)
+                delete[] playerSpecialScore;
+            CloseWindow();
+            return 0;
             // if (IsKeyPressed(KEY_Y)) exitWindow = true;
             // else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
             if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindow = true;
         }
-
-
-
 
         switch (currentScreen)
         {
@@ -97,6 +117,7 @@ int main(void)
                 {
                     currentScreen = LOGIN;
                 }
+                
             } break;
             case LOGIN:
             {
@@ -112,7 +133,38 @@ int main(void)
             {
                 if (IsKeyPressed(KEY_ENTER))
                 {
-                    currentScreen = LEVEL;
+                    switch (choice)
+                    {
+                        case 1:
+                            normalMode = true;
+                            currentScreen = LEVEL;
+                            break;
+                        case 2:
+                            //special Mode
+                            normalMode = false;
+                            currentScreen = LEVEL;
+                            break;
+                        case 3:
+                        // login again
+                            deallocatePlayerArray(dataBase, dataBaseSize);
+                            dataBase = readUserData(dataBaseSize);
+                            currentScreen = LEADERBOARD;
+                            break;
+                        case 4:
+                        if (playerNormalScore != NULL)
+                            delete[] playerNormalScore;
+                        if (playerSpecialScore != NULL)
+                            delete[] playerSpecialScore;
+                            currentScreen = LOGIN;
+                            break;
+                    }
+                }
+            } break;
+            case LEADERBOARD :
+            {
+                if (IsKeyPressed(KEY_ENTER))
+                {
+                    currentScreen = MENU;
                 }
             } break;
             case LEVEL:
@@ -124,72 +176,122 @@ int main(void)
                         switch(currentLevel)
                         {
                             case 1:
-                                row = 3;
-                                col = 4;
+                                row = 7;
+                                col = 10;
+                                timeLevel = 12;
+                                remainHelp = 4;
+                                timeUp = 6;
                             break;
 
                             case 2:
-                                row = 3;
-                                col = 4;
+                                row = 7;
+                                col = 12;
+                                timeLevel = 12;
+                                remainHelp = 3;
+                                timeUp = 4.5;
                             break;
 
                             case 3:
-                                row = 8;
-                                col = 11;
+                                row = 7;
+                                col = 14;
+                                timeLevel = 10;
+                                remainHelp = 3;
+                                timeUp = 4;
                             break;
                             
                             case 4:
-                                row = 8;
-                                col = 13;
+                                row = 7;
+                                col = 14;
+                                timeLevel = 10;
+                                remainHelp = 3;
+                                timeUp = 3;
                             break;
 
                             case 5:
-                                row = 10;
-                                col = 14;
+                                row = 8;
+                                col = 15;
+                                timeLevel = 9;
+                                remainHelp = 3;
+                                timeUp = 3;
                             break;
 
                             case 6:
-                                // row = 10;
-                                // col = 16;
-                                row = 5;
-                                col = 4;
+                                row = 9;
+                                col = 16;
+                                timeLevel = 7;
+                                remainHelp = 3;
+                                timeUp = 2;
                         break;
                         }
-                        cout << "row : " << row << "col : " << col << endl;
+                        cout << "create table" << endl;
                         createTable(resArr, row, col, numberOfPicture);
+                        suggestion(resArr, row, col, suggestionList);
+
+                        playerPosX = 1;
+                        playerPosY = 1;
+                        playerSelectionX = 1;
+                        playerSelectionY = 1;
                     }
+                    startGameTime = GetTime();
                     currentScreen = GAMEPLAY;
                 }
             } break;
             case GAMEPLAY:
             {
-                if (isMatching == true)
+                timeLeft = timeLevel - (GetTime() - startGameTime);
+                if (timeLeft > timeLevel)
                 {
-                    cout << "aaaaa";
+                    // bounus scoree if player playing toooo fasssttttt
+                    scoree += 30;
+                    startGameTime = GetTime();
+                }
+                //player Out of Time
+                if (timeLeft < 0)
+                {
+                    saveScore(playerNormalScore, currentLevel, scoree);
+                    cout << "free tabe" << endl;
+                    free2DArray(resArr, row);
+                    resArr = NULL;
+                    currentScreen = SCORE;
+                }
+                else if (isMatching == true)
+                {
+                    startGameTime += timeUp;
                     clearList(suggestionList);
                     suggestion(resArr, row, col, suggestionList);
+                    // player win or the matrix need to be random again
                     if (suggestionList == NULL)
                     {
-                        // player win or the matrix need to be random again
 
                         //if player win we need to update playerscore and update current level
                         if (checkEmpty(resArr, row, col))
                         {
                             // cập nhật điểm mở khóa màn chơi mới cho người chơi
                             saveScore(playerNormalScore, currentLevel, scoree);
-                            levelUp(playerNormalScore, maxNormalLevel);
-                            // chuyển sang menu score
+                            if (currentLevel == maxNormalLevel && currentLevel < 6)
+                            { 
+                                levelUp(playerNormalScore, maxNormalLevel);
+                            }
+                            // giải phóng mảng 2 chiều
+                            cout << "free table" << endl;
                             free2DArray(resArr, row);
                             resArr = NULL;
+                            //chuyển sang màn hình score
                             currentScreen = SCORE;
                             break;
-                            cout << "win";
                         }
                         else
                         {
-                            hintshuffle(resArr, row, col);
+                            while (suggestionList == NULL)
+                            {
+                                shuffle_array_2d(resArr, row, col);
+                                clearList(suggestionList);
+                                suggestion(resArr, row, col, suggestionList);
+                            }
                         }
+                        // nếu chưa thắng và không có nước đi nào còn có thể đi được thì xáo mảng lại
                     }
+                    
                     isMatching = false;
                 }
             } break;
@@ -197,13 +299,8 @@ int main(void)
             {
                 if (IsKeyPressed(KEY_ENTER))
                 {
-                    if (currentLevel == maxNormalLevel && currentLevel < 6)
-                    {
-                        cout << "level up : " << endl;
-                        cout << "max normal level : " << maxNormalLevel << endl;
-                    }
+                    scoree = 0;
                     currentScreen = LEVEL;
-
                 }
             } break;
             case EXIST:
@@ -227,22 +324,32 @@ int main(void)
                 Vector2 textSize = MeasureTextEx(GetFontDefault(), "hiiiii welcome to my game project :D", 40, 4);
                 DrawText("hiiiii welcome to my game project :D", screenWidth / 2 - textSize.x/2, 300, 40, GRAY);
             } break;
+
             case LOGIN:
             {
                 drawLogin(keyPressed, choice, userName);
 
             } break;
+
             case MENU:
             {
-                menuChoice(choice, keyPressed);
+                menuChoice(choice);
                 menuDraw(choice);
             } break;
+
+            case LEADERBOARD :
+            {
+                displayLeaderBoard(dataBase, dataBaseSize, normalLeaderBoard, levelLeaderBoard);
+            } break;
+
             case LEVEL:
             {
                 levelMenu(currentLevel, maxNormalLevel);
             } break;
+
             case GAMEPLAY:
             {
+                
                 if (GetTime() - previousMatchingTime < 0.5)
                 {
                     drawLine(pointList, 60, 60);
@@ -251,15 +358,19 @@ int main(void)
                 drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY, resTexture);
                 updateTable(resArr, playerPosX, playerPosY, row, col, selected, playerSelectionX, playerSelectionY, pointList, previousMatchingTime, scoree, isMatching);
                 displayScore(scoree);
+                displayTimer(timeLevel, timeLeft);
 
-                if (IsKeyPressed(KEY_X))
+                if (IsKeyPressed(KEY_X) && remainHelp > 0)
                 {
+                    remainHelp--;
                     previousSuggestTime = GetTime();
                 }
+
                 if (GetTime() - previousSuggestTime < 0.5)
                 {
                     drawLine(suggestionList, 60, 60);
                 }
+
             } break;
             case LEVELSPECIAL:
             {
@@ -282,13 +393,8 @@ int main(void)
         }
 
         EndDrawing();
-
-
     }
 
     CloseWindow();
-
-     delete[] resTexture;
-
     return 0;
 }

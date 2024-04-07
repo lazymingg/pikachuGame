@@ -13,6 +13,10 @@
 		"iosfwd": "cpp",
 		"fstream": "cpp",
 		"ostream": "cpp",
-		"string": "cpp"
+		"string": "cpp",
+		"new": "cpp",
+		"array": "cpp",
+		"string_view": "cpp",
+		"initializer_list": "cpp"
 	}
 }

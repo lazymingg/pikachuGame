@@ -1,36 +1,9 @@
-minh
-5 0 0 0 0 0 
-1 0
-binhdethuongggg
-1 0
-1 0
-anhbay
-1 0
-1 0
-dat
-1 0
-1 0
-binh
-1 0
-1 0
+minhday
+2 1150 530 0 0 0 0
+1 0 0 0 0 0 0
+wdsa
+2 1190 0 0 0 0 0
+1 0 0 0 0 0 0
 minhne
-4 40598304 15 1050 0
-1 0
-minhneeeee
-2 0 0
-1 0
-minne
-1 0
-1 0
-da
-1 0
-1 0
-moi
-1 0
-1 0
-abc
-1 0
-1 0
-nhut
-1 0
-1 0
+1 0 0 0 0 0 0
+1 0 0 0 0 0 0
