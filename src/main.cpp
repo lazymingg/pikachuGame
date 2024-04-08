@@ -86,6 +86,8 @@ int main(void)
     int exitOption = 0;
     bool isPlayerInMatch = false;
 
+    int pressFrame = 0;
+
     GameScreen previousGameScreen = LOGO;
 
     SetTargetFPS(60);
@@ -450,9 +452,10 @@ int main(void)
                 }
                 //khi win hãy xóa bộ nhớ của list điểm cuối cùng và delete resArr nữa 
                 drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY, resTexture);
-                updateTable(resArr, playerPosX, playerPosY, row, col, selected, playerSelectionX, playerSelectionY, pointList, previousMatchingTime, scoree, isMatching);
+                updateTable(resArr, playerPosX, playerPosY, row, col, selected, playerSelectionX, playerSelectionY, pointList, previousMatchingTime, scoree, isMatching, pressFrame);
                 displayScore(scoree);
                 displayTimer(timeLevel, timeLeft);
+                displayRemainingHelp(remainHelp);
 
                 if (IsKeyPressed(KEY_X) && remainHelp > 0)
                 {

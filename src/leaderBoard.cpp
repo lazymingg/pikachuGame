@@ -120,7 +120,7 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
 
     if (mode)
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size && i < 5; i++)
         {
             Vector2 textSize = MeasureTextEx(GetFontDefault(), TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerNormalScore[level - 1]), 40, 4);
             DrawText(TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerNormalScore[level - 1]), screenWidth / 2 - textSize.x/2, i * 65 + 250, 40, GRAY);
@@ -128,7 +128,7 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
     }
     else
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size && i < 5; i++)
         {
             Vector2 textSize = MeasureTextEx(GetFontDefault(), TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerSpecialScore[level - 1]), 40, 4);
             DrawText(TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerSpecialScore[level - 1]), screenWidth / 2 - textSize.x/2, i * 65 + 250, 40, GRAY);
@@ -162,6 +162,7 @@ void displayLeaderBoard(PlayerData *arr, int size, bool &mode, int &level)
     {   
         if (level == 1)
         level = 6;
+        else
         level--;
     }
     switch (level)

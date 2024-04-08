@@ -48,7 +48,7 @@ void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int s
 //delete cell
 void deleteCell(Pokemon **a, int deletePosX, int deletePosY);
 int calScore(int x_1, int y_1, int x_2, int y_2, char key);
-void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching);
+void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching, int &framesCounter);
 bool suggestion(Pokemon **pokeArr, int row, int col, Point *&pointList);
 bool suggestionButItJustForDeveloper(Pokemon **pokeArr, int row, int col, Point *&pointList, float &matchingTime);
 bool checkEmpty(Pokemon **pokeArr, int row, int col);

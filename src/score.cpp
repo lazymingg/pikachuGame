@@ -42,8 +42,25 @@ void displayScore(int scoree)
 }
 void scoreMenu(int scoree, int hiScore)
 {
-    DrawText(TextFormat("SCORE: %i", scoree), 1024/2 - 50, 130, 40, MAROON);
-    DrawText(TextFormat("HI-SCORE: %i", hiScore), 1084/2 - 50, 200, 50, BLACK);
-    DrawText("Press ENTER to SAVE values", 250, 310, 20, LIGHTGRAY);
-    DrawText("Press SPACE to LOAD values", 252, 350, 20, LIGHTGRAY);
+
+    int screenHeight = GetScreenHeight();
+    int screenWidth = GetScreenWidth();
+    Vector2 textSize = MeasureTextEx(GetFontDefault(),TextFormat("SCORE: %i", scoree), 40, 4);
+    DrawText(TextFormat("SCORE: %i", scoree), screenWidth / 2 - textSize.x / 2, 130, 40, MAROON);
+    textSize = MeasureTextEx(GetFontDefault(),TextFormat("HI-SCORE: %i", hiScore), 50, 5);
+    DrawText(TextFormat("HI-SCORE: %i", hiScore), screenWidth / 2 - textSize.x / 2, 200, 50, BLACK);
+    textSize = MeasureTextEx(GetFontDefault(),"Press ENTER to SAVE values", 20, 2);
+    DrawText("Press ENTER to SAVE values", screenWidth / 2 - textSize.x / 2, 400, 20, GRAY);
+    textSize = MeasureTextEx(GetFontDefault(),"Press SPACE to LOAD values", 20, 2);
+    DrawText("Press SPACE to LOAD values", screenWidth / 2 - textSize.x / 2, 500, 20, GRAY);
+}
+void displayRemainingHelp(int remainHelp)
+{
+    int screenHeight = GetScreenHeight();
+    int screenWidth = GetScreenWidth();
+    string text = "Remaining Help : ";
+
+    Vector2 textSize = MeasureTextEx(GetFontDefault(),TextFormat("%s %i", text.c_str(), remainHelp), 20, 2);
+    DrawText(TextFormat("%s %i", text.c_str(), remainHelp), 85, 20, 20, GRAY);
+
 }

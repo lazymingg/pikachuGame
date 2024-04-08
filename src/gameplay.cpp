@@ -749,95 +749,261 @@ int calScore(int x_1, int y_1, int x_2, int y_2, char key)
     }
     return 0;
 }
-void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching)
+
+void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching, int &framesCounter)
 {
     Point* temp = NULL;
-    if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ENTER)) {
-        if (!firstSelectionDone) {
-            if (IsKeyPressed(KEY_D) && playerPosX < col - 2) {
-                playerPosX++;
-            } else if (IsKeyPressed(KEY_A) && playerPosX > 1) {
-                playerPosX--;
-            } else if (IsKeyPressed(KEY_W) && playerPosY > 1) {
-                playerPosY--;
-            } else if (IsKeyPressed(KEY_S) && playerPosY < row - 2) {
-                playerPosY++;
-            } else if (IsKeyPressed(KEY_ENTER) && pokeArr[playerPosY][playerPosX].deleted == false) {
-                firstSelectionDone = true;
-                selectedX = playerPosX;
-                selectedY = playerPosY;
-                pokeArr[selectedY][selectedX].selected = true;
+    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_A) || IsKeyDown(KEY_W) || IsKeyDown(KEY_S) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_ENTER) || IsKeyDown(KEY_SPACE))
+    {
+        framesCounter += 1;
+        if (framesCounter < 30)
+        {
+            if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_SPACE))
+            {
+                if (!firstSelectionDone)
+                {
+                    if ((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) && (playerPosX < col - 2))
+                    {
+                        
+                        playerPosX++;
+                    }
+                    else if ((IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) && (playerPosX > 1))
+                    {
+                        playerPosX--;
+                    }
+                    else if ((IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) && (playerPosY > 1))
+                    {
+                        playerPosY--;
+                    }
+                    else if ((IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) && (playerPosY < row - 2))
+                    {
+                        playerPosY++;
+                    } else if ((IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) && pokeArr[playerPosY][playerPosX].deleted == false)
+                    {
+                        firstSelectionDone = true;
+                        selectedX = playerPosX;
+                        selectedY = playerPosY;
+                        pokeArr[selectedY][selectedX].selected = true;
+                    }
+                }
+                else
+                {
+                    if ((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) && (playerPosX < col - 2))
+                    {
+                        playerPosX++;
+                    }
+                    else if ((IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) && (playerPosX > 1))
+                    {
+                        playerPosX--;
+                    }
+                    else if ((IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) && (playerPosY > 1))
+                    {
+                        playerPosY--;
+                    }
+                    else if ((IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) && (playerPosY < row - 2))
+                    {
+                        playerPosY++;
+                    }
+                    else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE))
+                    {
+                        firstSelectionDone = false; // Reset for next selection
+                        if (temp = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                        {
+                            cout << "imatching " << endl;
+                            clearList(pointList);
+                            pointList = temp;
+                            deleteCell(pokeArr, selectedX, selectedY);
+                            deleteCell(pokeArr, playerPosX, playerPosY);
+                            isMatching = true;
+                            matchingTime = GetTime();
+                            scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'i');
+                        }
+                        else if(temp = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                        {
+                            cout << "zmatching" << endl;
+                            clearList(pointList);
+                            pointList = temp;
+                            deleteCell(pokeArr, selectedX, selectedY);
+                            deleteCell(pokeArr, playerPosX, playerPosY);
+                            isMatching = true;
+                            matchingTime = GetTime();
+                            scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'z');
+                        }
+                        else if(temp = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+                        {
+                            cout << "lmatching" << endl;
+                            clearList(pointList);
+                            pointList = temp;
+                            deleteCell(pokeArr, selectedX, selectedY);
+                            deleteCell(pokeArr, playerPosX, playerPosY);
+                            isMatching = true;
+                            matchingTime = GetTime();
+                            scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'l');
+                        }
+                        else if(temp = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+                        {
+                            cout << "umatching"<< endl;
+                            clearList(pointList);
+                            pointList = temp;
+                            deleteCell(pokeArr, selectedX, selectedY);
+                            deleteCell(pokeArr, playerPosX, playerPosY);
+                            matchingTime = GetTime();
+                            isMatching = true;
+                            scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'u');
+                        }
+                        else if (selectedX != playerPosX && selectedY != playerPosY && pokeArr[playerPosY][playerPosX].deleted == false && pokeArr[selectedY][selectedX].deleted == false)
+                        {
+                            cout << "scoredown";
+                            if (scoree - 30 > 0)
+                            scoree -= 30;
+                        }
+                        pokeArr[selectedY][selectedX].selected = false;
+                        firstSelectionDone = true;
+                        selectedX = playerPosX;
+                        selectedY = playerPosY;
+                        pokeArr[selectedY][selectedX].selected = true;
+                    }
+                }
             }
-        } else {
-            if (IsKeyPressed(KEY_D) && playerPosX < col - 2) {
-                playerPosX++;
-            } else if (IsKeyPressed(KEY_A) && playerPosX > 1) {
+        }
+        else
+        {
+            if ((IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) && (playerPosX < col - 2))
+            {
+                if (framesCounter % 5 == 0)
+                playerPosX++; 
+            }
+            else if ((IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) && (playerPosX > 1))
+            {
+                if (framesCounter % 5 == 0)
                 playerPosX--;
-            } else if (IsKeyPressed(KEY_W) && playerPosY > 1) {
+            }
+            else if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) && (playerPosY > 1))
+            {
+                if (framesCounter % 5 == 0)
                 playerPosY--;
-            } else if (IsKeyPressed(KEY_S) && playerPosY < row - 2) {
+            }
+            else if ((IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) && (playerPosY < row - 2))
+            {
+                if (framesCounter % 5 == 0)
                 playerPosY++;
-            } else if (IsKeyPressed(KEY_ENTER)) {
-                firstSelectionDone = false; // Reset for next selection
-                if (temp = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
-                {
-                    cout << "imatching " << endl;
-                    clearList(pointList);
-                    pointList = temp;
-                    deleteCell(pokeArr, selectedX, selectedY);
-                    deleteCell(pokeArr, playerPosX, playerPosY);
-                    isMatching = true;
-                    matchingTime = GetTime();
-                    scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'i');
-                }
-                else if(temp = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
-                {
-                    cout << "zmatching" << endl;
-                    clearList(pointList);
-                    pointList = temp;
-                    deleteCell(pokeArr, selectedX, selectedY);
-                    deleteCell(pokeArr, playerPosX, playerPosY);
-                    isMatching = true;
-                    matchingTime = GetTime();
-                    scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'z');
-                }
-                else if(temp = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
-                {
-                    cout << "lmatching" << endl;
-                    clearList(pointList);
-                    pointList = temp;
-                    deleteCell(pokeArr, selectedX, selectedY);
-                    deleteCell(pokeArr, playerPosX, playerPosY);
-                    isMatching = true;
-                    matchingTime = GetTime();
-                    scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'l');
-                }
-                else if(temp = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
-                {
-                    cout << "umatching"<< endl;
-                    clearList(pointList);
-                    pointList = temp;
-                    deleteCell(pokeArr, selectedX, selectedY);
-                    deleteCell(pokeArr, playerPosX, playerPosY);
-                    matchingTime = GetTime();
-                    isMatching = true;
-                    scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'u');
-                }
-                else if (selectedX != playerPosX && selectedY != playerPosY || pokeArr[playerPosY][playerPosX].deleted == false && pokeArr[selectedY][selectedX].deleted == false)
-                {
-                    cout << "scoredown";
-                    if (scoree - 30 > 0)
-                    scoree -= 30;
-                }
-                pokeArr[selectedY][selectedX].selected = false;
-                firstSelectionDone = true;
-                selectedX = playerPosX;
-                selectedY = playerPosY;
-                pokeArr[selectedY][selectedX].selected = true;
             }
         }
     }
+    else framesCounter = 0;
 }
+
+// void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching)
+// {
+//     Point* temp = NULL;
+//     if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_SPACE))
+//     {
+//         if (!firstSelectionDone)
+//         {
+//             if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT) && playerPosX < col - 2)
+//             {
+                
+//                 playerPosX++;
+//             }
+//             else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT) && playerPosX > 1)
+//             {
+//                 playerPosX--;
+//             }
+//             else if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP) && playerPosY > 1)
+//             {
+//                 playerPosY--;
+//             }
+//             else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN) && playerPosY < row - 2)
+//             {
+//                 playerPosY++;
+//             } else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE) && pokeArr[playerPosY][playerPosX].deleted == false)
+//             {
+//                 firstSelectionDone = true;
+//                 selectedX = playerPosX;
+//                 selectedY = playerPosY;
+//                 pokeArr[selectedY][selectedX].selected = true;
+//             }
+//         }
+//         else
+//         {
+//             if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT) && playerPosX < col - 2)
+//             {
+//                 playerPosX++;
+//             }
+//             else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT) && playerPosX > 1)
+//             {
+//                 playerPosX--;
+//             }
+//             else if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP) && playerPosY > 1)
+//             {
+//                 playerPosY--;
+//             }
+//             else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN) && playerPosY < row - 2)
+//             {
+//                 playerPosY++;
+//             }
+//             else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE))
+//             {
+//                 firstSelectionDone = false; // Reset for next selection
+//                 if (temp = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+//                 {
+//                     cout << "imatching " << endl;
+//                     clearList(pointList);
+//                     pointList = temp;
+//                     deleteCell(pokeArr, selectedX, selectedY);
+//                     deleteCell(pokeArr, playerPosX, playerPosY);
+//                     isMatching = true;
+//                     matchingTime = GetTime();
+//                     scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'i');
+//                 }
+//                 else if(temp = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+//                 {
+//                     cout << "zmatching" << endl;
+//                     clearList(pointList);
+//                     pointList = temp;
+//                     deleteCell(pokeArr, selectedX, selectedY);
+//                     deleteCell(pokeArr, playerPosX, playerPosY);
+//                     isMatching = true;
+//                     matchingTime = GetTime();
+//                     scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'z');
+//                 }
+//                 else if(temp = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
+//                 {
+//                     cout << "lmatching" << endl;
+//                     clearList(pointList);
+//                     pointList = temp;
+//                     deleteCell(pokeArr, selectedX, selectedY);
+//                     deleteCell(pokeArr, playerPosX, playerPosY);
+//                     isMatching = true;
+//                     matchingTime = GetTime();
+//                     scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'l');
+//                 }
+//                 else if(temp = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
+//                 {
+//                     cout << "umatching"<< endl;
+//                     clearList(pointList);
+//                     pointList = temp;
+//                     deleteCell(pokeArr, selectedX, selectedY);
+//                     deleteCell(pokeArr, playerPosX, playerPosY);
+//                     matchingTime = GetTime();
+//                     isMatching = true;
+//                     scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'u');
+//                 }
+//                 else if (selectedX != playerPosX && selectedY != playerPosY && pokeArr[playerPosY][playerPosX].deleted == false && pokeArr[selectedY][selectedX].deleted == false)
+//                 {
+//                     cout << "scoredown";
+//                     if (scoree - 30 > 0)
+//                     scoree -= 30;
+//                 }
+//                 pokeArr[selectedY][selectedX].selected = false;
+//                 firstSelectionDone = true;
+//                 selectedX = playerPosX;
+//                 selectedY = playerPosY;
+//                 pokeArr[selectedY][selectedX].selected = true;
+//             }
+//         }
+//     }
+// }
 
 bool suggestion(Pokemon **pokeArr, int row, int col, Point *&pointList){
     for (int i = 0; i < row; i++){

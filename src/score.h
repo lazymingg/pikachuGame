@@ -10,4 +10,5 @@
 void displayScore(int score);
 std::string intToString(int number);
 void scoreMenu(int scoree, int hiScore);
+void displayRemainingHelp(int remainHelp);
 #endif
