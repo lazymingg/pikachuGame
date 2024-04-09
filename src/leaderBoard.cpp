@@ -86,12 +86,16 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
 {
     int screenHeight = GetScreenHeight();
     int screenWidth = GetScreenWidth();
-
+    Color fadedColor = Fade(BLACK, 0.5f); // Thiết lập độ trong suốt của màu sắc
     Vector2 textSize = MeasureTextEx(GetFontDefault(), "LEADER BOARD :D", 50, 5);
-    DrawText("LEADER BOARD :D", screenWidth / 2 - textSize.x/2, 50, 50, GRAY);
+    // vẽ khung hình vuông bao quanh text
+    DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 20, 50 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+    DrawText("LEADER BOARD :D", screenWidth / 2 - textSize.x/2, 50, 50, PINK);
     string temp = "Level : " + to_string(level);
     textSize = MeasureTextEx(GetFontDefault(), temp.c_str(), 50, 5);
-    DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2, 130, 50, GRAY);
+    // vẽ khung hình vuông bao quanh text
+    DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 10, 130 - 10, textSize.x + 20, textSize.y + 20}, fadedColor);
+    DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2, 130, 50, PINK);
     temp = "Only the top 5 outstanding players are mentioned here";
     textSize = MeasureTextEx(GetFontDefault(), temp.c_str(), 20, 2);
     DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2, 590, 20, GRAY);
@@ -103,7 +107,9 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
     {
         temp = "Normal Mode";
         textSize = MeasureTextEx(GetFontDefault(), temp.c_str(), 40, 4);
-        DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2 - 350, screenHeight / 2 - textSize.y/2 - 60, 40, RED);
+        // vẽ khung hình vuông bao quanh text
+        DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x/2 - 350 - 20, screenHeight / 2 - textSize.y/2 - 60 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+        DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2 - 350, screenHeight / 2 - textSize.y/2 - 60, 40, PINK);
         temp = "Special Mode";
         textSize = MeasureTextEx(GetFontDefault(), temp.c_str(), 40, 4);
         DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2 - 350, screenHeight / 2 - textSize.y/2 + 60 , 40, GRAY);
@@ -115,7 +121,8 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
         DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2 - 350, screenHeight / 2 - textSize.y/2 - 60, 40, GRAY);
         temp = "Special Mode";
         textSize = MeasureTextEx(GetFontDefault(), temp.c_str(), 40, 4);
-        DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2 - 350, screenHeight / 2 - textSize.y/2 + 60, 40, RED);
+        DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x/2 - 350 - 20, screenHeight / 2 - textSize.y/2 + 60 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+        DrawText(temp.c_str(), screenWidth / 2 - textSize.x/2 - 350, screenHeight / 2 - textSize.y/2 + 60, 40, PINK);
     }
 
     if (mode)
@@ -123,7 +130,7 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
         for (int i = 0; i < size && i < 5; i++)
         {
             Vector2 textSize = MeasureTextEx(GetFontDefault(), TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerNormalScore[level - 1]), 40, 4);
-            DrawText(TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerNormalScore[level - 1]), screenWidth / 2 - textSize.x/2, i * 65 + 250, 40, GRAY);
+            DrawText(TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerNormalScore[level - 1]), screenWidth / 2 - textSize.x/2, i * 65 + 250, 40, GOLD);
         }
     }
     else
@@ -131,7 +138,7 @@ void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode)
         for (int i = 0; i < size && i < 5; i++)
         {
             Vector2 textSize = MeasureTextEx(GetFontDefault(), TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerSpecialScore[level - 1]), 40, 4);
-            DrawText(TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerSpecialScore[level - 1]), screenWidth / 2 - textSize.x/2, i * 65 + 250, 40, GRAY);
+            DrawText(TextFormat("%s %i", arr[i].userName.c_str(), arr[i].playerSpecialScore[level - 1]), screenWidth / 2 - textSize.x/2, i * 65 + 250, 40, GOLD);
         }
     }
 }

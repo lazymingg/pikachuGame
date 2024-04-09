@@ -30,12 +30,16 @@ void menuDraw(int choice)
     const char *option4 ="Go Back";
 
     Vector2 textSize = MeasureTextEx(GetFontDefault(), title, 40, 4);
-    DrawText(title, screenWidth / 2 - textSize.x/2, 100, 40, GRAY);
+    Color fadedColor = Fade(BLACK, 0.5f); // Thiết lập độ trong suốt của màu sắc
+    // vẽ khung hình vuông bao quanh text
+    DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 20, 100 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+    DrawText(title, screenWidth / 2 - textSize.x/2, 100, 40, PINK);
 
     if (choice == 1)
     {
         textSize = MeasureTextEx(GetFontDefault(), option1, 40, 4);
-        DrawText(option1, screenWidth / 2 - textSize.x/2, 200, 40, RED);
+        DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 20, 200 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+        DrawText(option1, screenWidth / 2 - textSize.x/2, 200, 40, PINK);
     }
     else
     {
@@ -45,7 +49,8 @@ void menuDraw(int choice)
     if (choice == 2)
     {
         textSize = MeasureTextEx(GetFontDefault(), option2, 40, 4);
-        DrawText(option2, screenWidth / 2 - textSize.x/2, 300, 40, RED);
+        DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 20, 300 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+        DrawText(option2, screenWidth / 2 - textSize.x/2, 300, 40, PINK);
     }
     else
     {
@@ -55,7 +60,8 @@ void menuDraw(int choice)
     if (choice == 4)
     {
         textSize = MeasureTextEx(GetFontDefault(), option4, 40, 4);
-        DrawText(option4, screenWidth / 2 - textSize.x/2, 500, 40, RED);
+        DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 20, 500 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+        DrawText(option4, screenWidth / 2 - textSize.x/2, 500, 40, PINK);
     }
     else
     {
@@ -65,7 +71,8 @@ void menuDraw(int choice)
     if (choice == 3)
     {
         textSize = MeasureTextEx(GetFontDefault(), option3, 40, 4);
-        DrawText(option3, screenWidth / 2 - textSize.x/2, 400, 40, RED);
+        DrawRectangleRec((Rectangle){screenWidth / 2 - textSize.x / 2 - 20, 400 - 20, textSize.x + 40, textSize.y + 40}, fadedColor);
+        DrawText(option3, screenWidth / 2 - textSize.x/2, 400, 40, PINK);
     }
     else
     {
@@ -80,6 +87,16 @@ void levelMenu(int &currentLevel, int maxNormalLevel)
     int screenWidth = GetScreenWidth();
     if (IsKeyPressed(KEY_D) && currentLevel < maxNormalLevel) currentLevel++;
     else if (IsKeyPressed(KEY_A) && currentLevel > 1) currentLevel--;
+
+    Vector2 textSize;
+    textSize = MeasureTextEx(GetFontDefault(),"Use button A to decrease difficulty and button D to increase difficulty.", 20, 2);
+    DrawText("Use button A to decrease difficulty and button D to increase difficulty.", screenWidth / 2 - textSize.x / 2, 100, 20, GRAY);
+    textSize = MeasureTextEx(GetFontDefault()," You must win the previous level to unlock the next level.", 20, 2);
+    DrawText("You must win the previous level to unlock the next level.", screenWidth / 2 - textSize.x / 2, 150, 20, GRAY);
+    textSize = MeasureTextEx(GetFontDefault(),"Press Enter to play, Enjoyy :D", 20, 2);
+    DrawText("Press Enter to play, Enjoyy :D", screenWidth / 2 - textSize.x / 2, 200, 20, GRAY);
+    textSize = MeasureTextEx(GetFontDefault(),"During gameplay, use the WASD keys to move and press Enter to select.", 20, 2);
+    DrawText("During gameplay, use the WASD keys to move and press Enter to select.", screenWidth / 2 - textSize.x / 2, 600, 20, GRAY);
 
     const int maxLevel = 6;
 
@@ -112,7 +129,7 @@ void levelMenu(int &currentLevel, int maxNormalLevel)
             break;
     }
 
-    Vector2 textSize = MeasureTextEx(GetFontDefault(), difficulty, 40, 4);
+    textSize = MeasureTextEx(GetFontDefault(), difficulty, 40, 4);
     DrawText(difficulty, screenWidth / 2 - textSize.x/2, 450, 40, GRAY);
 
 }
@@ -120,8 +137,8 @@ void exitMenu(int &exitOption, bool isPlayerInMatch)
 {
     int screenHeight = GetScreenHeight();
     int screenWidth = GetScreenWidth();
-
-    DrawRectangle(0, screenHeight / 2 - 250, screenWidth, 500, BLACK);
+    Color fadedColor = Fade(BLACK, 0.5f); // Thiết lập độ trong suốt của màu sắc
+    DrawRectangleRec((Rectangle){0, screenHeight / 2 - 250, screenWidth, 500}, fadedColor);
     string text1 = "Are you sure you want to exit the game ?";
     string text2 = "Game paused";
     Vector2 textSize;
@@ -159,7 +176,7 @@ void exitMenu(int &exitOption, bool isPlayerInMatch)
     if (exitOption == 0)
     {
         textSize = MeasureTextEx(GetFontDefault(), option1, 30, 3);
-        DrawText(option1, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 150, 30, RED);
+        DrawText(option1, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 150, 30, PINK);
     }
     else
     {
@@ -169,7 +186,7 @@ void exitMenu(int &exitOption, bool isPlayerInMatch)
     if (exitOption == 1)
     {
         textSize = MeasureTextEx(GetFontDefault(), option2, 30, 3);
-        DrawText(option2, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 250, 30, RED);
+        DrawText(option2, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 250, 30, PINK);
     }
     else
     {
@@ -179,7 +196,7 @@ void exitMenu(int &exitOption, bool isPlayerInMatch)
     if (exitOption == 2)
     {
         textSize = MeasureTextEx(GetFontDefault(), option3, 30, 3);
-        DrawText(option3, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 350, 30, RED);
+        DrawText(option3, screenWidth / 2 - textSize.x/2, screenHeight / 2 - 250 + 350, 30, PINK);
     }
     else
     {

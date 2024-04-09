@@ -62,5 +62,8 @@ void displayRemainingHelp(int remainHelp)
 
     Vector2 textSize = MeasureTextEx(GetFontDefault(),TextFormat("%s %i", text.c_str(), remainHelp), 20, 2);
     DrawText(TextFormat("%s %i", text.c_str(), remainHelp), 85, 20, 20, GRAY);
+    textSize = MeasureTextEx(GetFontDefault(), "Press ESC to pause game or press x key to get some help from meee :D", 20, 2);
+    DrawText("Press ESC to pause game or press x key to get some help from meee :D", screenWidth / 2 - textSize.x / 2, 660, 20, GRAY);
+
 
 }

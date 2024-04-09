@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <string.h>
 
-
 struct Pokemon
 {
     bool deleted = false;
