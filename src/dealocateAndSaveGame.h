@@ -1,3 +1,8 @@
+/*
+    "Most of the functions below were coded by me and my partner. 
+    If any function is referenced or copied from another source, 
+    the source will be noted in a comment above the function."
+*/
 #ifndef dealocateAndSaveGame
 #define dealocateAndSaveGame
 

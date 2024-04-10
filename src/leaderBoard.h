@@ -1,3 +1,8 @@
+/*
+    "Most of the functions below were coded by me and my partner. 
+    If any function is referenced or copied from another source, 
+    the source will be noted in a comment above the function."
+*/
 #ifndef leaderBoard
 #define leaderBoard
 
@@ -6,7 +11,6 @@
 #include <raylib.h>
 #include <string>
 using namespace std;
-// Khai báo biến global
 
 
 struct PlayerData
@@ -17,7 +21,7 @@ struct PlayerData
     int *playerSpecialScore = NULL;
     int maxSpecialLevel = 1;
 };
-// Khai báo các hàm
+
 PlayerData* readUserData(int &size);
 void bubbleSort(PlayerData *arr, int n, int level, bool mode);
 void drawLeaderBoard(PlayerData *arr, int size, int level, bool mode);

@@ -1,6 +1,13 @@
+/*
+    "Most of the functions below were coded by me and my partner. 
+    If any function is referenced or copied from another source, 
+    the source will be noted in a comment above the function."
+*/
 #include "dealocateAndSaveGame.h"
 
-
+/*
+    main funtion to dealocate all the data of the game before exit game :D
+*/
 void deleteAllDataAndSaveSocore(int *&playerNormalScore, int *&playerSpecialScore, int maxNormalLevel, int maxSpecialLevel, string filePath, string userName, Point* &pointList, Point* &suggestionList, Texture2D *&restexture, int numberOfPicture, Pokemon **&resArr, int row, PlayerData *&dataBase, int dataBaseSize)
 {
     saveGame(userName, playerNormalScore, maxNormalLevel, playerSpecialScore, maxSpecialLevel, filePath);

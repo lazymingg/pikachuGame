@@ -1,6 +1,15 @@
+/*
+    "Most of the functions below were coded by me and my partner. 
+    If any function is referenced or copied from another source, 
+    the source will be noted in a comment above the function."
+*/
+
 #include "gameplay.h"
 
-using namespace std;
+/*
+    thís funtion aim to delete dynamic texture array and unload texture using
+    Unloaded Texture frome raylib
+*/
 void UnloadTextureArray(Texture2D* textureArray, int arraySize)
 {
     for (int i = 0; i < arraySize; ++i)
@@ -10,16 +19,20 @@ void UnloadTextureArray(Texture2D* textureArray, int arraySize)
 
     delete[] textureArray;
 }
+// free 2d dynamic array
 void free2DArray(Pokemon** arr, int rows)
 {
+    // is empty arr
     if (arr == NULL) return;
-    // Giải phóng từng hàng của mảng
+    
     for (int i = 0; i < rows; ++i) {
         delete[] arr[i];
     }
-    // Giải phóng con trỏ đến mảng chính
+    // dealocate
     delete[] arr;
 }
+
+// create point Nodes
 Point* createNodes(int x, int y)
 {
     //tao nodes
@@ -30,16 +43,26 @@ Point* createNodes(int x, int y)
     newNodes -> next = NULL;
     return newNodes;
 }
-void clearList(Point *&head) {
-    while (head != nullptr) {
-        Point *temp = head; // Lưu địa chỉ của node hiện tại
-        head = head->next; // Di chuyển head đến node tiếp theo
-        delete temp; // Xóa node hiện tại
+// clear Point list
+void clearList(Point *&head)
+{
+    // if list empty pause
+    if (head == NULL)
+    return;
+
+    while (head != nullptr)
+    {
+        Point *temp = head; 
+        head = head->next; 
+        delete temp;
     }
+    // head = NULL to orther recoznize that list is empty
     head = NULL;
 }
 
-void addTail(Point* &pHead, int x, int y){
+// add nodes to the end of list
+void addTail(Point* &pHead, int x, int y)
+{
     Point *add = new Point;
     add->x = x;
     add->y = y;
@@ -51,6 +74,70 @@ void addTail(Point* &pHead, int x, int y){
         pCur->next = add;
     }
 }
+/*
+    this funtion aim to do the special mode which if there is a empty row or an empty col
+    every element will be move up or to left 
+*/
+void specialModeColasp(Pokemon **pokeArr, int row, int col)
+{
+    //move every element to the left 
+    for (int i = 1; i < col - 1; i++)
+    {
+        bool isColEmpty = true;
+
+        for (int j = 1; j < row - 1; j++)
+        {
+            if (pokeArr[j][i].deleted == false)
+            {
+                isColEmpty = false;
+                break;
+            }
+        }
+        // if col empty move every element to left
+        if (isColEmpty)
+        {
+            for (int s = i; s < col - 2; s++)
+            {
+                for (int k = 0; k < row - 1 ; k++)
+                {
+                    swap(pokeArr[k][s], pokeArr[k][s + 1]);
+                }
+            }
+            col--; // reduce col if not have this there will be and infinire loop
+            i--;
+        }
+    }
+
+    //move element up
+    for (int i = 1; i < row - 1; i++)
+    {
+        bool isRowEmpty = true;
+
+        for (int j = 1; j < col - 1; j++)
+        {
+            if (pokeArr[i][j].deleted == false)
+            {
+                isRowEmpty = false;
+                break;
+            }
+        }
+        // if have row empty move every element up
+        if (isRowEmpty)
+        {
+            for (int s = i; s < row - 2; s++)
+            {
+                for (int k = 1; k < col - 1 ; k++)
+                {
+                    swap(pokeArr[s][k], pokeArr[s + 1][k]);
+                }
+            }
+            row--; // reduce row if not have this there will be and infinire loop
+            i--;
+        }
+    }
+}
+
+
 /**********************************U I Z L maching*************************************/
 Point* uMatching (Pokemon **pokeArr, int row, int col, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
@@ -381,46 +468,53 @@ Point *zMatching(Pokemon **pokeArr, int x_1, int y_1, int x_2, int y_2){
     }
     return NULL;
 }
+/*
+    L matching checking funtion if they are matching return a point list reference to the L case for drawing job
+*/
 Point *lMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
-    // base condition
+    // ignore if they are not same or if they are one
+    // base conditon
     if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key || playerPosXX == playerPosX && playerPosY == playerPosYY)
     return NULL;
     if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true) return NULL;
 
-    // tạo List các điểm 
+    // gennrate head for point list
     Point* pHead = NULL;
 
-    // chắc chắn rằng điểm playerPosX , playerPosY luôn là điểm nằm bên trái
+    // make sure that playerPosX, playerPosY is the location of the left in one of two pokemon
     if (playerPosX > playerPosXX)
     {
         swap(playerPosX, playerPosXX);
         swap(playerPosY, playerPosYY);
     }
-
-    // nếu điểm còn lại ở trên
+    
+    // if the last one pokemon in right have taller location
     if (playerPosYY < playerPosY)
     {
-        // duyệt qua phải
+        // case go ringht and go up
+        // travese from fist point to right
         for (int i = 1; i <= playerPosXX - playerPosX; i++)
         {
+            // access through the right if blocked then switch to another case
             if (pokeArr[playerPosY][playerPosX + i].deleted == false)
-            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
+            break; 
 
+            //stop travese
             if (i == playerPosXX - playerPosX)
             {
-                // duyệt lên
+                // travese up
                 for (int j = 0; j < playerPosY - playerPosYY; j++)
                 {
-                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    //access through the right if blocked then switch to another case
                     if (pokeArr[playerPosY - j][playerPosX + i].deleted == false)
                     {
                         break;
                     }
-                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    // if not being blocked return point list
                     if (j == playerPosY - playerPosYY - 1)
                     {
-                        // gán điểm 
+                        // create point list
                         addTail(pHead, playerPosX, playerPosY);
                         addTail(pHead, playerPosX + i, playerPosY);
                         addTail(pHead, playerPosX + i, playerPosY);
@@ -430,23 +524,27 @@ Point *lMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
                 }
             }
         }
-        // Duyệt lên rồi qua phải
+
+        // go up and go right case
+        // travese up
         for (int i = 1; i <= playerPosY - playerPosYY; i++)
         {
+            // if being blocked switch to another case
             if (pokeArr[playerPosY - i][playerPosX].deleted == false)
-            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
+            break;
 
+            // if have the same Y location continue to travese right
             if (i == playerPosY - playerPosYY)
             {
-                // duyệt qua Phải
+                // travese to right till meet the last pokemon
                 for (int j = 0; j < playerPosXX - playerPosX; j++)
                 {
-                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    // if being blocked switch to another case
                     if (pokeArr[playerPosY - i][playerPosX + j].deleted == false)
                     {
                         break;
                     }
-                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    // if not being blocked create point list and return point list
                     if (j == playerPosXX - playerPosX - 1)
                     {
                         // gán điểm 
@@ -461,26 +559,28 @@ Point *lMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
         }
 
     }
-    // nếu điểm còn lại ở dưới 
+    //  if the last one in right have location lower then the first in left
     if (playerPosYY > playerPosY)
     {
-        // duyệt qua phải
+        // travese to right till have same x value
         for (int i = 1; i <= playerPosXX - playerPosX; i++)
         {
-            if (pokeArr[playerPosY][playerPosX + i].deleted == false)
-            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
 
+            // if being blocked switch to another case
+            if (pokeArr[playerPosY][playerPosX + i].deleted == false)
+            break;
+            // when have same x location continue travese down 
             if (i == playerPosXX - playerPosX)
             {
-                // duyệt xuống
+                // travese down till meet the last pokemon
                 for (int j = 0; j < playerPosYY - playerPosY; j++)
                 {
-                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    // if being blocked switch to another case
                     if (pokeArr[playerPosY + j][playerPosX + i].deleted == false)
                     {
                         break;
                     }
-                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    // if not being blocked input point to list and return list
                     if (j == playerPosYY - playerPosY - 1)
                     {
                         // gán điểm 
@@ -493,23 +593,25 @@ Point *lMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
                 }
             }
         }
-        // duyệt xuống rồi qua phải 
+        // case go down then go right
+        // travese down till have same y location
         for (int i = 1; i <= playerPosYY - playerPosY; i++)
         {
+            //if being blocked switch to another case
             if (pokeArr[playerPosY + i][playerPosX].deleted == false)
-            break; // nếu đường đi bị chặn thì hủy không chạy nữa chuyển sang trường hợp dưới
-
+            break;
+            // if have same y location continue travese to right
             if (i == playerPosYY - playerPosY)
             {
-                // duyệt qua phải
+                // travese to right till meet the last pokemon
                 for (int j = 0; j < playerPosXX - playerPosX; j++)
                 {
-                    // nếu bị chặn đường thì chuyển sang trường hợp khác
+                    // if being blocked switch to another case
                     if (pokeArr[playerPosY + i][playerPosX + j].deleted == false)
                     {
                         break;
                     }
-                    // nếu thỏa điều kiện đã chạy tới ô cần xét
+                    // if not being blocked input point to list and return list
                     if (j == playerPosXX - playerPosX - 1)
                     {
                         // gán điểm 
@@ -525,76 +627,98 @@ Point *lMatching(Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPo
     }
     return NULL;
 }
+/*
+    I matching cheking funtion if they matching this funtion will return a point list using linked list
+    to reference to the line for drawing job
+*/
 Point* iMatching (Pokemon **pokeArr, int playerPosX, int playerPosY, int playerPosXX, int playerPosYY)
 {
-    //ignore if they are not same or if they are one
+    // ignore if they are not same or if they are one
+    // base conditon
     if (pokeArr[playerPosY][playerPosX].key != pokeArr[playerPosYY][playerPosXX].key || playerPosX == playerPosXX && playerPosY == playerPosYY) return NULL;
     if (pokeArr[playerPosY][playerPosX].deleted == true || pokeArr[playerPosYY][playerPosXX].deleted == true) return NULL;
-    //create point list
+
+    // create point list 
     Point *pHead = NULL;
-
+    // if they have same y location
     if (playerPosY == playerPosYY)
-    {
+    {    
         if (playerPosX > playerPosXX) swap(playerPosX, playerPosXX);
-
+        //travese to right
         for (int i = playerPosX + 1; i < playerPosXX; i++)
         {
             if (pokeArr[playerPosY][i].deleted == false) return NULL;
         }
-        // input point for list
+        // input point for list and return  
         pHead = createNodes(playerPosX, playerPosY);
         pHead -> next = createNodes(playerPosXX,playerPosYY);
         return pHead;
     }
-
+    // if they have same y location
     if (playerPosXX == playerPosX)
     {
         if (playerPosY > playerPosYY) swap(playerPosY, playerPosYY);
-
+        // travese down
         for (int i = playerPosY + 1; i < playerPosYY; i++)
         {
             if (pokeArr[i][playerPosX].deleted == false) return NULL;
         }
-        // input point for list
+        // input point for list then return
         pHead = createNodes(playerPosX, playerPosY);
         pHead -> next = createNodes(playerPosXX,playerPosYY);
         return pHead;
     }
+    // if not i matching return NULL
     return NULL;
 }
+
+/**********************************************************************************************************************************/
+
+
+/*
+    after matching or suggest list it provided this funtion aim to draw all the line conneted by two point in linklist (point list)
+*/
 void drawLine(Point* pHead, int scaledWidth, int scaledHeight)
 {
+    // base case if empty return
     if (pHead == NULL) return;
 
     Point *pCur = pHead->next;
     Point *pPrev = pHead;
 
+    // travese and draw all point 
+    while (pCur != NULL)
+    {
+        // get two point to to draw a line
+        Vector2 point1 = {(pPrev->x * (scaledWidth + 5) + scaledWidth / 2), (pPrev->y * (scaledHeight + 5) + scaledHeight / 2)};
+        Vector2 point2 = {(pCur->x * (scaledWidth + 5) + scaledWidth / 2), (pCur->y * (scaledHeight + 5) + scaledHeight / 2)};
+        // draw a circle in point of intersection of two line
+        DrawCircle((pPrev->x * (scaledWidth + 5) + scaledWidth / 2), (pPrev->y * (scaledHeight + 5) + scaledHeight / 2), 5, BLUE);
+        // draw line
+        DrawLineEx(point1, point2, 3, BLUE);// Ve duong thang
+        // draw a circle in point of intersection of two line
+        DrawCircle((pCur->x * (scaledWidth + 5) + scaledWidth / 2), (pCur->y * (scaledHeight + 5) + scaledHeight / 2), 5, BLUE);
 
-        while (pCur != NULL)
+        // check if is there have another line or not
+        if (pCur -> next)
         {
-            // Gan diem dau va cuoi cua duong thang theo kich thuoc cua o
-            Vector2 point1 = {(pPrev->x * (scaledWidth + 5) + scaledWidth / 2), (pPrev->y * (scaledHeight + 5) + scaledHeight / 2)};
-            Vector2 point2 = {(pCur->x * (scaledWidth + 5) + scaledWidth / 2), (pCur->y * (scaledHeight + 5) + scaledHeight / 2)};
-            DrawCircle((pPrev->x * (scaledWidth + 5) + scaledWidth / 2), (pPrev->y * (scaledHeight + 5) + scaledHeight / 2), 5, BLUE);
-            DrawLineEx(point1, point2, 3, BLUE);// Ve duong thang
-            DrawCircle((pCur->x * (scaledWidth + 5) + scaledWidth / 2), (pCur->y * (scaledHeight + 5) + scaledHeight / 2), 5, BLUE);
-
-            // Kiểm tra xem còn đoạn thẳng tiếp theo không
-            if (pCur -> next)
-            {
-                pPrev = pPrev -> next -> next;
-                pCur = pCur -> next -> next;
-            }
-            else 
-            {
-                pCur = pHead->next;
-                pPrev = pHead;
-                break;
-            }
+            pPrev = pPrev -> next -> next;
+            pCur = pCur -> next -> next;
         }
+        // if there is not remaining line loop again to draw line
+        else 
+        {
+            pCur = pHead->next;
+            pPrev = pHead;
+            break;
+        }
+    }
 }
 
-//read (n)image name "image.(i)"
+/*
+    read (n)image name "image.(i)" and return a dymanic texture array
+    texture is a funtion provided by raylib graphics libary
+*/
 Texture2D* readImage(const int nPicture)
 {
     //location to your picture
@@ -608,37 +732,48 @@ Texture2D* readImage(const int nPicture)
         string tempName = picNameBase + to_string(i) + ".png"; //picname
         string picName = path + tempName; //  name with location
 
-        Image image = LoadImage(picName.c_str());// load image
-        resTexture[i] = LoadTextureFromImage(image);// load texture from image
+        Image image = LoadImage(picName.c_str());//load image
+        resTexture[i] = LoadTextureFromImage(image);//load texture from image
         UnloadImage(image);// delete image after load
     }
+    //return ressult dynamic result texture array
     return resTexture;
 }
+/*
+becasue swap(pokemon[i], pokemon[j]) may erors becasue 
+they are struct and my teacher say that we should not do that 
+*/
+void swapPokemon(Pokemon& p1, Pokemon& p2)
+{
+    using std::swap; // Import swap
 
-void swapPokemon(Pokemon& p1, Pokemon& p2) {
-    using std::swap; // Import hàm swap từ thư viện chuẩn
-
-    // Sử dụng hàm swap để hoán đổi từng phần tử của hai biến
     swap(p1.deleted, p2.deleted);
     swap(p1.selected, p2.selected);
     swap(p1.key, p2.key);
 }
+/*
+    this funtion using Fisher-Yates shuffle algorithm
+    i take this from chat GPT, openAI
+*/
 void shufflePokemonArray(Pokemon* pokemonArray, int size) {
-    // Sử dụng hạt giống ngẫu nhiên từ thời gian
+    // Random seed
     srand(time(NULL));
 
-    // Bắt đầu từ phần tử cuối cùng và di chuyển ngược lên
+    // Start from the last element and move backwards
     for (int i = size - 1; i > 0; --i) {
-        // Chọn một phần tử ngẫu nhiên trong đoạn từ 0 đến i
+        // Choose a random element in the range from 0 to i
         int j = rand() % (i + 1);
 
-        // Hoán đổi giá trị của phần tử thứ i và j
+        // Swap the values of element i and j
         swapPokemon(pokemonArray[i], pokemonArray[j]);
     }
 }
 
-// hàm này sẽ tạo môtj bảng với viền bên ngoài sẽ là các pokemon được gán mặc định là đã bị xóa
-// làm vậy để sau này đồng bộ với hàm vẽ đường đi vì đương đi có thể nằm ở ngoài viền
+
+/*
+    this funtion create a dynamic 2d Array to store pokemon
+    and random it
+*/
 void createTable(Pokemon** &resArr, int row, int col, int nPicture)
 {   
     //seed random
@@ -649,7 +784,7 @@ void createTable(Pokemon** &resArr, int row, int col, int nPicture)
     int size = (row - 2)*(col - 2);
     Pokemon *temp = new Pokemon[size];
 
-    //random Image via key
+    //random Image via key and input two neighboring element
     for (int i = 0; i < size;)
     {
         randomNumber = rand() % nPicture;
@@ -660,27 +795,32 @@ void createTable(Pokemon** &resArr, int row, int col, int nPicture)
         temp[i].key = randomNumber;
         i++; 
     }
-
+    // shufle the one dim array
+    // i like to shuffle two times =))
     shufflePokemonArray(temp, size);
     shufflePokemonArray(temp, size);
-
-    cout << "flag";
+    
+    // create 2D array 
     resArr = new Pokemon*[row];
-    cout << "flag";
+
     for (int i = 0; i < row; i++)
     {
         resArr[i] = new Pokemon[col];
     }
-    //randomcolor
+
+    //input all element fromt one dim arr have been shuffle 
+    // to 2D array but here we dont input on the grid of the 2d array 
+    // to get more easy when building all matching algolrithm
     int count = 0;
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < col; j++)
         {
+            // input delete = true on the grid of the array
             if (i == 0 || j == 0 || i == row - 1 || j == col - 1)
             {
                 resArr[i][j].deleted = true;
-                resArr[i][j].key = temp[count].key;
+                resArr[i][j].key = 0;
             }
             else
             {
@@ -693,54 +833,64 @@ void createTable(Pokemon** &resArr, int row, int col, int nPicture)
     //free the one dim arr
     delete[] temp;
 }
+/*
+    this funtion aim to draw the table where the player will see all
+    the pokemon to play and draw player pos via the rectangle line
+*/
 void drawTable(Pokemon **a, int row, int col, const int scaledWidth, const int scaledHeight, int playerPosX, int playerPosY, Texture2D *texture)
 {
+
+    //travese 2d Array
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < col; j++)
         {
-            if(a[i][j].deleted == false || (j == playerPosX && i == playerPosY))
+            // draw all the poke are not being delete
+            if(a[i][j].deleted == false)
             {
+
                 //sourceRec is a size of source image destRec, is size of the out put image
                 Rectangle sourceRec = { 0, 0, (texture[a[i][j].key]).width, (texture[a[i][j].key]).height };
                 Rectangle destRec = { j * (scaledWidth + 5), i * (scaledHeight + 5), scaledWidth, scaledHeight};
+                //dest line rec is the size of the rectangle line display the playerPos
                 Rectangle destLineRec = { j * (scaledWidth + 5) - 5, i * (scaledHeight + 5) - 5, scaledWidth + 10, scaledHeight + 10};
 
-            if (a[i][j].deleted == true)
-            {
-                // DrawRectangle(j * (scaledWidth + 5), i * (scaledHeight + 5), scaledWidth, scaledHeight, Fade(LIGHTGRAY, 0.5f));
-                DrawRectangleLinesEx(destLineRec, 9, ORANGE);
-            }
-            else if ((j == playerPosX && i == playerPosY))
-            {
+                // draw poke
                 DrawTexturePro(texture[a[i][j].key], sourceRec, destRec, {0, 0}, 0, WHITE);
-                DrawRectangleLinesEx(destLineRec, 9, ORANGE);
-            }
-            else
-            {
+                // if they are being selected draw a grid rectangle
                 if (a[i][j].selected == true)
                 {
-                DrawTexturePro(texture[a[i][j].key], sourceRec, destRec, {0, 0}, 0, WHITE);
-                DrawRectangleLinesEx(destLineRec, 9, ORANGE);
+                    DrawRectangleLinesEx(destLineRec, 9, ORANGE);
                 }
-                else
-                DrawTexturePro(texture[a[i][j].key], sourceRec, destRec, {0, 0}, 0, WHITE);
+
             }
+            // or if player pos are there draw a rectangle grid to player know
+            if ((j == playerPosX && i == playerPosY))
+            {
+                Rectangle destLineRec = { j * (scaledWidth + 5) - 5, i * (scaledHeight + 5) - 5, scaledWidth + 10, scaledHeight + 10};
+                DrawRectangleLinesEx(destLineRec, 9, ORANGE);
             }
+
         }
     }
 }
-//delete cell
+//delete pokemon element
 void deleteCell(Pokemon **a, int deletePosX, int deletePosY)
 {
     a[deletePosY][deletePosX].deleted = true;
 }
-
+/*
+    this funtion aim to cal score of the player depend on the distance of the 
+    two matching point and the matching type
+*/
 int calScore(int x_1, int y_1, int x_2, int y_2, char key)
 {
+    // the distance of two point
     int x = x_2 - x_1, y = y_2 - y_1;
+    // if they a negative turning they to positive
     if (x < 0) x = 0 - x;
     if (y < 0) y = 0 - y;
+    //score depend on matching type
     switch(key)
     {
         case 'i' : return (x + y)*5 + 10;
@@ -750,19 +900,49 @@ int calScore(int x_1, int y_1, int x_2, int y_2, char key)
     }
     return 0;
 }
+/*
+    this is the soul of the game this funtion handling all case of matching, calc score, and out put
+    time where the line should be draw, update player moving and player selection, update point list and delete it prev list before
+    create new one
 
+    there also have feature which when player hold moving keys they will go more faster
+    because this funtion is very important and hard to understand so i give you a brief
+    decription about all the parameter of this funtion 
+
+    pokeArr       2D array containing information about the Pokemon on the table.
+    playerPosX    Reference to the current x-coordinate of the player on the table.
+    playerPosY    Reference to the current y-coordinate of the player on the table.
+    row           Number of rows in the game table.
+    col           Number of columns in the game table.
+    firstSelectionDone    Flag indicating whether the player has selected the first Pokemon.
+    selectedX     Reference to the x-coordinate of the selected Pokemon.
+    selectedY     Reference to the y-coordinate of the selected Pokemon.
+    pointList     Pointer to the list of connecting points between selected Pokemon we will return this list for
+    a draw line out side this funtion to draw that line
+    matchingTime  Reference to the time when the matching occurs.
+    scoree        Reference to the player's score.
+    isMatching    Flag indicating whether the selected Pokemon are forming a valid pair.
+    framesCounter Reference to the counter for frames elapsed since last key press.
+*/
 void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, int col, bool &firstSelectionDone, int &selectedX, int &selectedY, Point* &pointList, float &matchingTime, int &scoree, bool &isMatching, int &framesCounter)
 {
+    //create temp point list
     Point* temp = NULL;
+    // check is player press any key 
     if (IsKeyDown(KEY_D) || IsKeyDown(KEY_A) || IsKeyDown(KEY_W) || IsKeyDown(KEY_S) || IsKeyDown(KEY_UP) || IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_ENTER) || IsKeyDown(KEY_SPACE))
     {
+        //increment the frames counter
         framesCounter += 1;
+        //if frames counter is less than 20 mean that player just pressed it but not hold it
         if (framesCounter < 20)
         {
+            //if any movement or selection key is pressed
             if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_W) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_SPACE))
             {
+                //if the player does't selected the first Pokemon yet
                 if (!firstSelectionDone)
                 {
+                    //handdle player movement and initial selection
                     if ((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) && (playerPosX < col - 2))
                     {
                         
@@ -779,7 +959,9 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     else if ((IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) && (playerPosY < row - 2))
                     {
                         playerPosY++;
-                    } else if ((IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) && pokeArr[playerPosY][playerPosX].deleted == false)
+                    }
+                    //if the player presses enter or space to select a Pokemon
+                    else if ((IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) && pokeArr[playerPosY][playerPosX].deleted == false)
                     {
                         firstSelectionDone = true;
                         selectedX = playerPosX;
@@ -789,6 +971,7 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                 }
                 else
                 {
+                    // handle player move after selection
                     if ((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) && (playerPosX < col - 2))
                     {
                         playerPosX++;
@@ -807,21 +990,27 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                     }
                     else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE))
                     {
-                        firstSelectionDone = false; // Reset for next selection
+                        firstSelectionDone = false; //reset for next selection
+                        //chek i matching
                         if (temp = iMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                         {
-                            cout << "imatching " << endl;
+                            // dealocate before input new list
                             clearList(pointList);
                             pointList = temp;
+                            // delete pokemon if they imatching
                             deleteCell(pokeArr, selectedX, selectedY);
                             deleteCell(pokeArr, playerPosX, playerPosY);
+                            //reference ismatching to main funtion so main funtion will know that have couple of pokemon
+                            // have been matching
                             isMatching = true;
+                            //reference time to main funtion
                             matchingTime = GetTime();
+                            //calculate scoree
                             scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'i');
                         }
+                        // 3 case down is same as the first one
                         else if(temp = zMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                         {
-                            cout << "zmatching" << endl;
                             clearList(pointList);
                             pointList = temp;
                             deleteCell(pokeArr, selectedX, selectedY);
@@ -832,7 +1021,6 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                         }
                         else if(temp = lMatching(pokeArr, selectedX, selectedY, playerPosX, playerPosY))
                         {
-                            cout << "lmatching" << endl;
                             clearList(pointList);
                             pointList = temp;
                             deleteCell(pokeArr, selectedX, selectedY);
@@ -843,7 +1031,6 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                         }
                         else if(temp = uMatching(pokeArr, row, col, selectedX, selectedY, playerPosX, playerPosY))
                         {
-                            cout << "umatching"<< endl;
                             clearList(pointList);
                             pointList = temp;
                             deleteCell(pokeArr, selectedX, selectedY);
@@ -852,9 +1039,9 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
                             isMatching = true;
                             scoree += calScore(selectedX, selectedY, playerPosX, playerPosY, 'u');
                         }
+                        // penalty if player chose wrong couple of pokemon
                         else if (selectedX != playerPosX && selectedY != playerPosY && pokeArr[playerPosY][playerPosX].deleted == false && pokeArr[selectedY][selectedX].deleted == false)
                         {
-                            cout << "scoredown";
                             if (scoree - 30 > 0)
                             scoree -= 30;
                         }
@@ -893,47 +1080,52 @@ void updateTable(Pokemon **pokeArr, int &playerPosX, int &playerPosY, int row, i
     }
     else framesCounter = 0;
 }
-
+/*
+    This function traverses through the 2d pokemon matrix and finds all pairs of pokemon
+    to check if they are matching or not it will returns the point list for suggestion.
+*/
 bool suggestion(Pokemon **pokeArr, int row, int col, Point *&pointList)
 {
+    //traverse through the matrix
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < col; j++)
         {
+            //if the pokemon is not deleted
             if (pokeArr[i][j].deleted == false)
             {
+                //check each pair of pokemon
                 for (int k = 0; k < row; k++)
                 {
                     for (int l = 0; l < col; l++)
                     {
+                        //avoid checking the same pokemon
                         if (!(i == k && j == l))
                         {
+                            //try different matching patterns to find a match
                             Point* p1 = uMatching(pokeArr, row, col, j, i, l, k);
                             if (p1 != NULL)
                             {
+                                //if a match is found assign the point list and return true
                                 pointList = p1;
-                                // matchingTime = GetTime();
                                 return true;
                             }
                             Point* p2 = zMatching(pokeArr, j, i, l, k);
                             if (p2 != NULL)
                             {
                                 pointList = p2;
-                                // matchingTime = GetTime();
                                 return true;
                             }
                             Point* p3 = lMatching(pokeArr, j, i, l, k);
                             if (p3 != NULL)
                             {
                                 pointList = p3;
-                                // matchingTime = GetTime();
                                 return true;
                             }
                             Point* p4 = iMatching(pokeArr, j, i, l, k);
                             if (p4 != NULL)
                             {
                                 pointList = p4;
-                                // matchingTime = GetTime();
                                 return true;
                             }
                         }
@@ -942,9 +1134,18 @@ bool suggestion(Pokemon **pokeArr, int row, int col, Point *&pointList)
             }
         }
     }
+    //if no matching pair is found set pointList to NULL and return false
     pointList = NULL;
     return false;
 }
+
+/*
+    this function checks if the Pokemon array is empty or not
+    it traverses through the 2D array and checks if any pokemon is not deleted
+    if it finds any pokemon that is not deleted returns false
+    indicating that the array is not empty otherwise it return true
+    indicating that the array is empty.
+*/
 bool checkEmpty(Pokemon **pokeArr, int row, int col)
 {
     for (int i = 0; i < row; i++)
@@ -952,70 +1153,25 @@ bool checkEmpty(Pokemon **pokeArr, int row, int col)
         for (int j = 0; j < col; j++)
         {
             if (pokeArr[i][j].deleted == false)
-            return false;
+                return false;
         }
     }
     return true;
 }
-bool suggestionButItJustForDeveloper(Pokemon **pokeArr, int row, int col, Point *&pointList, float &matchingTime){
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
-        {
-            if (pokeArr[i][j].deleted == false)
-            {
-                for (int k = 0; k < row; k++)
-                {
-                    for (int l = 0; l < col; l++)
-                    {
-                        if (!(i == k && j == l))
-                        {
-                            Point* p1 = uMatching(pokeArr, row, col, j, i, l, k);
-                            if (p1 != NULL)
-                            {
-                                pointList = p1;
-                                matchingTime = GetTime();
-                                return true;
-                            }
-                            Point* p2 = zMatching(pokeArr, j, i, l, k);
-                            if (p2 != NULL)
-                            {
-                                pointList = p2;
-                                matchingTime = GetTime();
-                                return true;
-                            }
-                            Point* p3 = lMatching(pokeArr, j, i, l, k);
-                            if (p3 != NULL)
-                            {
-                                pointList = p3;
-                                matchingTime = GetTime();
-                                return true;
-                            }
-                            Point* p4 = iMatching(pokeArr, j, i, l, k);
-                            if (p4 != NULL)
-                            {
-                                pointList = p4;
-                                matchingTime = GetTime();
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return false;
-}
+/*
+    i take this funtion from https://chat.openai.com/ is using Fisher-Yates shuffle algorthm
+    to shuffle array in case player can win the game becasue threre are no couple of pokemon can matching
+*/
 void shuffle_array_2d(Pokemon **arr, int row, int col)
 {
-  // Bắt đầu từ vị trí (1, 1) và kết thúc tại (row - 2, col - 2) để chừa viền ngoài
+  // Start from position (1, 1) and end at (row - 2, col - 2) to leave the outer border
   for (int i = 1; i < row - 1; i++) {
     for (int j = 1; j < col - 1; j++) {
-      // Tạo một vị trí ngẫu nhiên trong phạm vi phần tử bên trong
+      // Generate a random position within the range of inner elements
       int rand_i = rand() % (row - 2 - 1) + 1;
       int rand_j = rand() % (col - 2 - 1) + 1;
 
-      // Hoán đổi phần tử tại vị trí hiện tại với vị trí ngẫu nhiên
+      //swap the element at the current position with the random position
       swapPokemon(arr[i][j], arr[rand_i][rand_j]);
     }
   }
