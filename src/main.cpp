@@ -502,7 +502,6 @@ int main(void)
                             // if they are loin and logo they must login fist before goin the menu
                             else if (previousGameScreen == LOGIN || previousGameScreen == LOGO) 
                             {
-                                cout << "flaggggg" << endl;
                                 currentScreen = LOGIN;
                             }
                             //dealocate data base if they were in leader board
