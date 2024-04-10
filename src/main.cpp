@@ -392,9 +392,12 @@ int main(void)
                         if (checkEmpty(resArr, row, col))
                         {
                             // save score
+                            if (normalMode)
                             saveScore(playerNormalScore, currentLevel, scoree);
+                            else
+                            saveScore(playerSpecialScore, currentLevel, scoree);
                             //update player level if they win
-                            if (currentLevel == maxNormalLevel && currentLevel < 6)
+                            if (currentLevel == maxNormalLevel && currentLevel < 6 && normalMode == true)
                             { 
                                 levelUp(playerNormalScore, maxNormalLevel);
                             }
@@ -592,13 +595,16 @@ int main(void)
                 // draw table for the game play
 
                 //draw the matching line if they matching
-                if (GetTime() - previousMatchingTime < 0.5)
+                if (GetTime() - previousMatchingTime < 0.4)
                 {
                     drawLine(pointList, 60, 60);
                 }
                 else if (normalMode == false)
                 {
                     specialModeColasp(resArr, row, col);
+                    //update suggest becase the location have been change
+                    clearList(suggestionList);
+                    suggestion(resArr, row, col, suggestionList);
                 }
                 cout << "flag";
 
@@ -630,7 +636,7 @@ int main(void)
                     scoreMenu(scoree, playerNormalScore[currentLevel - 1]);
                 }
                 else
-                scoreMenu(scoree, playerSpecialScore[currentLevel - 1]);
+                    scoreMenu(scoree, playerSpecialScore[currentLevel - 1]);
             }
             break;
             case EXIST:

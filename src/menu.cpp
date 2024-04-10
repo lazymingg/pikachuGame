@@ -8,13 +8,13 @@
 void menuChoice(int &choice)
 {
     // if press key up
-    if (IsKeyPressed(KEY_W)) 
+    if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)) 
     {
         choice--;
         if (choice < 1) choice = 4; //wrap around
     }
     //if player press keys down
-    else if (IsKeyPressed(KEY_S)) 
+    else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN)) 
     {
         choice++;
         if (choice > 4) choice = 1; //wrap around
@@ -102,8 +102,8 @@ void levelMenu(int &currentLevel, int maxModeLevel)
     int screenHeight = GetScreenHeight();
     int screenWidth = GetScreenWidth();
     // handle player level moving
-    if (IsKeyPressed(KEY_D) && currentLevel < maxModeLevel) currentLevel++;
-    else if (IsKeyPressed(KEY_A) && currentLevel > 1) currentLevel--;
+    if ((IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) && currentLevel < maxModeLevel) currentLevel++;
+    else if ((IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) && currentLevel > 1) currentLevel--;
 
     // draw instruction
     Vector2 textSize;
@@ -177,14 +177,14 @@ void exitMenu(int &exitOption, bool isPlayerInMatch)
     const char *option3 = "Exit Game";
 
     //handle player choice
-    if (IsKeyPressed(KEY_S))
+    if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
     {
         if (exitOption == 2)
             exitOption = 0;
         else // Wrap around
             exitOption++;
     }
-    if (IsKeyPressed(KEY_W))
+    if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
     {
         if (exitOption == 0)
             exitOption = 2;
