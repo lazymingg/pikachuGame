@@ -34,7 +34,7 @@ struct Point
 
 void specialModeColasp(Pokemon **pokeArr, int row, int col);
 void UnloadTextureArray(Texture2D* textureArray, int arraySize);
-void free2DArray(Pokemon** arr, int rows);
+void free2DArray(Pokemon** &arr, int rows);
 void clearList(Point *&head);
 void drawLine(Point* pHead, int scaledWidth, int scaledHeight);
 void addTail(Point* &pHead, int x, int y);

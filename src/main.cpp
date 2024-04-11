@@ -28,7 +28,6 @@ int main(void)
     // reading audio from data
     InitAudioDevice();
     Sound correctSound = LoadSound("src/data/correctsound.wav");
-    Sound movingSound = LoadSound("stc/data/moving.wav");
     
     // this line will make the game can be close by anything
     SetExitKey(KEY_NULL);
@@ -124,8 +123,8 @@ int main(void)
 
     //this gif playing technique i reference from this web https://www.raylib.com/examples.html 
     int animFrames = 0;
-    Image imScarfyAnim = LoadImageAnim("src/data/background3.gif", &animFrames);
-    Texture2D texBackgroundAnim = LoadTextureFromImage(imScarfyAnim);
+    Image backGroundAnim = LoadImageAnim("src/data/background3.gif", &animFrames);
+    Texture2D texBackgroundAnim = LoadTextureFromImage(backGroundAnim);
     unsigned int nextFrameDataOffset = 0;  // Current byte offset to next frame in image.data
     int currentAnimFrame = 0;       // Current animation frame to load and draw
     int frameDelay = 8;             // Frame delay to switch between animation frames
@@ -147,11 +146,11 @@ int main(void)
             if (currentAnimFrame >= animFrames) currentAnimFrame = 0;
 
             // Get memory offset position for next frame data in image.data
-            nextFrameDataOffset = imScarfyAnim.width*imScarfyAnim.height*4*currentAnimFrame;
+            nextFrameDataOffset = backGroundAnim.width*backGroundAnim.height*4*currentAnimFrame;
 
             // Update GPU texture data with next frame image data
             // WARNING: Data size (frame size) and pixel format must match already created texture
-            UpdateTexture(texBackgroundAnim, ((unsigned char *)imScarfyAnim.data) + nextFrameDataOffset);
+            UpdateTexture(texBackgroundAnim, ((unsigned char *)backGroundAnim.data) + nextFrameDataOffset);
 
             frameCounter = 0;
         }
@@ -360,9 +359,9 @@ int main(void)
                 {
                     //save player score
                     if (normalMode)
-                    saveScore(playerNormalScore, currentLevel, scoree);
+                        saveScore(playerNormalScore, currentLevel, scoree);
                     else
-                    saveScore(playerSpecialScore, currentLevel, scoree);
+                        saveScore(playerSpecialScore, currentLevel, scoree);
 
                     cout << "free tabe" << endl;
                     //free the playing table
@@ -374,7 +373,7 @@ int main(void)
                     isPlayerInMatch = false;
                     currentScreen = SCORE;
                 }
-                else if (isMatching == true)
+                if (isMatching == true)
                 {
                     // if they matching get them bonus time 
                     startGameTime += timeUp;
@@ -393,9 +392,10 @@ int main(void)
                         {
                             // save score
                             if (normalMode)
-                            saveScore(playerNormalScore, currentLevel, scoree);
+                                saveScore(playerNormalScore, currentLevel, scoree);
                             else
-                            saveScore(playerSpecialScore, currentLevel, scoree);
+                                saveScore(playerSpecialScore, currentLevel, scoree);
+                                
                             //update player level if they win
                             if (currentLevel == maxNormalLevel && currentLevel < 6 && normalMode == true)
                             { 
@@ -412,7 +412,7 @@ int main(void)
                             // player not in match anymore turn to score menu
                             isPlayerInMatch = false;
                             currentScreen = SCORE;
-                            break;
+                            // break;
                         }
                         else if (normalMode == true)
                         {
@@ -436,7 +436,6 @@ int main(void)
                             // player not in match anymore turn to score menu
                             isPlayerInMatch = false;
                             currentScreen = SCORE;
-                            break;
                         }
                     }
                     //intialize ismatching again prepare for the next matching
@@ -531,6 +530,7 @@ int main(void)
         }
         //this is the second switch case to drawing all the game screen 
         BeginDrawing();
+
         ClearBackground(backGround);
         // resize the back ground to draw it
         Rectangle sourceRec = { 0, 0, texBackgroundAnim.width, texBackgroundAnim.height };
@@ -605,7 +605,6 @@ int main(void)
                     clearList(suggestionList);
                     suggestion(resArr, row, col, suggestionList);
                 }
-                cout << "flag";
 
                 //draw playing table and update them
                 drawTable(resArr, row, col, 60, 60, playerPosX, playerPosY, resTexture);

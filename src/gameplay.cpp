@@ -20,7 +20,7 @@ void UnloadTextureArray(Texture2D* textureArray, int arraySize)
     delete[] textureArray;
 }
 // free 2d dynamic array
-void free2DArray(Pokemon** arr, int rows)
+void free2DArray(Pokemon** &arr, int rows)
 {
     // is empty arr
     if (arr == NULL) return;
@@ -30,6 +30,7 @@ void free2DArray(Pokemon** arr, int rows)
     }
     // dealocate
     delete[] arr;
+    arr = NULL;
 }
 
 // create point Nodes

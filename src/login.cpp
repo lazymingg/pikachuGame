@@ -12,7 +12,7 @@ const int screenHeight = 686, screenWidth = 1024;
 */
 void drawLogin(bool &keyPressed, int &playerSelection, string &userName)
 {
-    // define text for draw
+    // defIne text for draw
     const char *title = "Pikachu The Matching Game :D";
     const char *title2 = "Press Enter to login :D";
     const char *option1 ="User Name : ";
@@ -72,37 +72,37 @@ void drawLogin(bool &keyPressed, int &playerSelection, string &userName)
     maxSpecialMode scorelevel1 scorelevel2 scorelevel3 scorelevel4 scorelevel5 scorelevel6
     this funtion aim to read the normalMode data
 */
-int *readNormalData(string filePath, string userName, int &size)
+int* readNormalData(string filePath, string userName, int& size)
 {
-    ifstream fIn(filePath.c_str());
-
-    if (!fIn.is_open()) 
+    ifstream fin(filePath.c_str());
+    if (!fin.is_open()) 
     {
-        cout << "can not open the file" << endl;
+        cout << "cannot open the file." << std::endl;
         return NULL;
     }
-    string temp = "";
-    size = 0;
-    int *normalData = NULL;
-    while (!fIn.eof())
+
+    string temp;
+    int* normalData = NULL;
+    while (getline(fin, temp))
     {
-        getline(fIn, temp);
         if (temp == userName)
         {
-            fIn >> size;
-            fIn.ignore();
-            //create normal mode data
+            //read size of normal mode data
+            fin >> size;
+            fin.ignore(); //ignore 
+
             normalData = new int[size];
+
             for (int i = 0; i < size; i++)
             {
-                fIn >> normalData[i];
-                fIn.ignore();
+                fin >> normalData[i];
             }
-            fIn.close();
+            fin.close();
             return normalData;
         }
     }
-    cout << "cant find normal data";
+
+    cout << "cannot find normal data for user." << std::endl;
     return NULL;
 }
 /*
@@ -112,40 +112,42 @@ int *readNormalData(string filePath, string userName, int &size)
     maxSpecialMode scorelevel1 scorelevel2 scorelevel3 scorelevel4 scorelevel5 scorelevel6
     this funtion aim to read the specialMode data
 */
-int *readSpecialData(string filePath, string userName, int &size)
+int* readSpecialData(string filePath, string userName, int& size)
 {
-    ifstream fIn(filePath.c_str());
-
-    if (!fIn.is_open()) 
+    ifstream fin(filePath);
+    if (!fin.is_open()) 
     {
-        cout << "can not open the file" << endl;
+        cout << "cannot open the file" << endl;
         return NULL;
     }
-    string temp = "";
-    size = 0;
-    int *specialData = NULL;
-    while (!fIn.eof())
+
+    string temp;
+    int* specialData = NULL;
+    while (getline(fin, temp))
     {
-        getline(fIn, temp);
         if (temp == userName)
         {
-            // skip one line
-            string skip;
-            getline(fIn, skip);
-            // read and create special array data
-            fIn >> size;
-            fIn.ignore();
+            // Read and discard the line containing maxNormalMode data
+            getline(fin, temp);
+
+            // Read size of special mode data
+            fin >> size;
+            fin.ignore(); // Ignore the newline character
+
+            // Allocate memory for specialData array
             specialData = new int[size];
+
+            // Read special mode data
             for (int i = 0; i < size; i++)
             {
-                fIn >> specialData[i];
-                fIn.ignore();
+                fin >> specialData[i];
             }
-            fIn.close();
+            fin.close();
             return specialData;
         }
     }
-    cout << "cant find special data";
+
+    cout << "cannot find special data for user" << endl;
     return NULL;
 }
 /*
@@ -235,7 +237,7 @@ void checkAndCreateUser(string filePath, string userName)
 
     if (!fIn.is_open()) 
     {
-        cout << "Không thể mở tệp tin!" << endl;
+        cout << "canot openfile" << endl;
         return;
     }
 

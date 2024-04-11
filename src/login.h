@@ -15,8 +15,8 @@ using namespace std;
 
 
 void drawLogin(bool &keyPressed, int &playerSelection, string &userName);
-int *readNormalData(string filePath, string userName, int &size);
-int *readSpecialData(string filePath, string userName, int &size);
+int* readNormalData(string filePath, string userName, int& size);
+int* readSpecialData(string filePath, string userName, int& size);
 void saveGame(string userName, int *playerNormalData, int maxNormalLevel, int *playerSpecialData, int maxSpecialLevel, string filePath);
 void checkAndCreateUser(string filePath, string userName);
 void levelUp(int *&playerModeScore, int &maxModeLevel);
